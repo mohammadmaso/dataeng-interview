@@ -10,7 +10,7 @@ Bilingual (English / فارسی) Data Engineering interview preparation site —
 ## Develop
 
 ```bash
-nvm use            # Node >= 22.12
+nvm use            # Node >= 22.12 (CI uses 24)
 npm install
 npm run dev        # http://localhost:4321
 npm run build      # static site in dist/ + search index
