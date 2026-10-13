@@ -4,6 +4,8 @@ import { t, faDigits, type Lang } from '../../../i18n/ui';
 import { getTopics } from '../../../lib/data';
 import qIndex from '../../../data/question-index.json';
 
+const faFiles = import.meta.glob('../../../data/questions-fa/*.json', { eager: true }) as Record<string, any>;
+
 const files = import.meta.glob('../../../data/questions/*.json', { eager: true }) as Record<string, any>;
 export function getStaticPaths() {
   return ['en', 'fa'].flatMap((lang) => (qIndex as any[]).map((c) => ({ params: { lang, chapter: c.slug } })));
@@ -13,6 +15,8 @@ const s = t(lang);
 const n = (x: number) => faDigits(x, lang);
 const slug = Astro.params.chapter!;
 const data = (Object.entries(files).find(([k]) => k.endsWith(`/${slug}.json`))![1] as any).default ?? Object.entries(files).find(([k]) => k.endsWith(`/${slug}.json`))![1];
+const faEntry = Object.entries(faFiles).find(([k]) => k.endsWith(`/${slug}.json`));
+const fa: Record<string, { q: string; a: string }> = lang === 'fa' && faEntry ? ((faEntry[1] as any).default ?? faEntry[1]) : {};
 const meta = (qIndex as any[]).find((c) => c.slug === slug);
 const topics = await getTopics(lang);
 const related = topics.filter((x) => meta.topics.includes(x.data.tid));
@@ -22,7 +26,7 @@ const siblings = (qIndex as any[]).filter((c) => c.vol === meta.vol);
   <main class="mx-auto max-w-4xl px-4 py-10">
     <nav class="mb-3 text-sm" style="color:var(--fg-muted)"><a href={`/${lang}/`} class="hover:underline">{s.home}</a> / <a href={`/${lang}/questions/`} class="hover:underline">{s.qbTitle}</a></nav>
     <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl" data-pagefind-meta="title">{data.title}</h1>
-    <p class="mt-2" style="color:var(--fg-muted)">{n(data.questions.length)} {s.qbCount}{lang === 'fa' ? ' (پاسخ‌ها انگلیسی)' : ''}</p>
+    <p class="mt-2" style="color:var(--fg-muted)">{n(data.questions.length)} {s.qbCount}{lang === 'fa' && !faEntry ? ' (پاسخ‌ها انگلیسی)' : ''}</p>
     {related.length > 0 && (
       <div class="mt-4 flex flex-wrap gap-2">
         {related.map((x) => <a class="chip hover:border-[var(--accent)]" href={`/${lang}/topics/${x.data.tid}/`}>{x.data.title}</a>)}
@@ -36,18 +40,23 @@ const siblings = (qIndex as any[]).filter((c) => c.vol === meta.vol);
     </div>
 
     <ol id="q-list" class="mt-4 grid gap-2" data-pagefind-body>
-      {data.questions.map((q: any, i: number) => (
-        <li class="q-item card" id={q.id} data-q={q.q.toLowerCase()}>
+      {data.questions.map((q0: any, i: number) => {
+        const tr = fa[q0.id];
+        const q = tr ? tr : q0;
+        const dir = tr ? 'rtl' : 'ltr';
+        return (
+        <li class="q-item card" id={q.id ?? q0.id} data-q={(q0.q + ' ' + (tr?.q ?? '')).toLowerCase()}>
           <details class="group">
             <summary class="flex cursor-pointer list-none items-start gap-3 p-4">
               <span class="mt-0.5 text-xs font-bold tabular-nums" style="color:var(--accent)">{n(i + 1)}</span>
-              <span class="flex-1 font-medium leading-snug" dir="ltr" style="text-align:start">{q.q}</span>
+              <span class="flex-1 font-medium leading-snug" dir={dir} style="text-align:start">{q.q}</span>
               <svg class="mt-1 h-3 w-3 shrink-0 transition group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 6 6 6-6 6"/></svg>
             </summary>
-            <div class="prose max-w-none border-t px-4 py-4 dark:prose-invert" dir="ltr" style="border-color:var(--border);text-align:left" set:html={q.a} />
+            <div class="prose max-w-none border-t px-4 py-4 dark:prose-invert" dir={dir} style={`border-color:var(--border);text-align:${tr ? 'right' : 'left'}`} set:html={q.a} />
           </details>
         </li>
-      ))}
+        );
+      })}
     </ol>
 
     <section class="mt-12 flex flex-wrap gap-2">
