@@ -1,0 +1,37 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { t, faDigits, type Lang } from '../../../i18n/ui';
+import qIndex from '../../../data/question-index.json';
+
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const n = (x: number) => faDigits(x, lang);
+const total = (qIndex as any[]).reduce((a, c) => a + c.count, 0);
+const vols = [1, 2, 3, 4].map((v) => ({ v, items: (qIndex as any[]).filter((c) => c.vol === v) }));
+const volTitle: Record<number, [string, string]> = {
+  1: ['SQL, Data Structures, Python & System Design', 'SQL، ساختمان داده، پایتون و طراحی سیستم'],
+  2: ['Databases, Warehouses & Data Modeling', 'دیتابیس‌ها، انبار داده و مدل‌سازی'],
+  3: ['Big Data Frameworks, Streaming & Formats', 'فریم‌ورک‌های کلان‌داده، استریم و فرمت‌ها'],
+  4: ['Cloud, Modern Data Stack & BI', 'کلاد، مدرن دیتا استک و BI'],
+};
+---
+<Base lang={lang} title={s.qbTitle} description={s.qbSub} path="questions/">
+  <main class="mx-auto max-w-5xl px-4 py-12">
+    <h1 class="text-4xl font-extrabold tracking-tight">{s.qbTitle}</h1>
+    <p class="mt-3 max-w-2xl text-lg" style="color:var(--fg-muted)">{s.qbSub} <strong>{n(total)}</strong> {s.qbCount}.</p>
+    {vols.map(({ v, items }) => (
+      <section class="mt-10">
+        <h2 class="mb-4 text-xl font-bold">{s.qbVolume} {n(v)} — {volTitle[v][lang === 'fa' ? 1 : 0]}</h2>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((c) => (
+            <a href={`/${lang}/questions/${c.slug}/`} class="card card-hover flex items-center justify-between p-4">
+              <span class="font-semibold">{c.title}</span><span class="chip">{n(c.count)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+    <p class="mt-12 text-sm" style="color:var(--fg-muted)">{s.qbSource} <a class="underline" href="https://github.com/OBenner/data-engineering-interview-questions">OBenner/data-engineering-interview-questions</a>. {s.qbSourceTail}</p>
+  </main>
+</Base>

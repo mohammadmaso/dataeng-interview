@@ -1,0 +1,12 @@
+---
+import { t, type Lang } from '../i18n/ui';
+const { lang, level, priority, type, hours, size } = Astro.props as { lang: Lang; level?: string; priority?: string; type?: string; hours?: number; size?: string };
+const s = t(lang);
+const fa = (n: number) => (lang === 'fa' ? String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[+d]) : String(n));
+---
+<span class="inline-flex flex-wrap items-center gap-1.5">
+  {level && <span class={`chip chip-${level}`}>{s.level[level as keyof typeof s.level]}</span>}
+  {priority && <span class={`chip chip-${priority}`}>{priority} · {s.priority[priority as keyof typeof s.priority]}</span>}
+  {type && <span class="chip">{s.type[type as keyof typeof s.type]}</span>}
+  {hours != null && <span class="chip">~{fa(hours)} {s.hours}</span>}
+</span>

@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import { plan } from '../../data/plan';
+import { t, faDigits, type Lang } from '../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+---
+<Base lang={lang} title={s.planTitle} description={s.planSub} path="study-plan/">
+  <main class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-4xl font-extrabold tracking-tight">{s.planTitle}</h1>
+    <p class="mt-3 text-lg" style="color:var(--fg-muted)">{s.planSub}</p>
+    <ol class="mt-8 grid gap-4">
+      {plan.map((p) => (
+        <li class="card flex gap-4 p-5">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-lg font-bold" style="background:var(--accent-soft);color:var(--accent)">{faDigits(p.w, lang)}</div>
+          <div>
+            <div class="text-xs font-semibold uppercase" style="color:var(--fg-muted)">{s.week} {faDigits(p.w, lang)} · {s.tracks}: {faDigits(p.tracks, lang)}</div>
+            <div class="mt-1 text-lg font-semibold">{lang === 'fa' ? p.fa : p.en}</div>
+            <div class="mt-1 text-sm" style="color:var(--fg-muted)">{s.deliverables}: {lang === 'fa' ? p.out_fa : p.out_en}</div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </main>
+</Base>

@@ -1,0 +1,53 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { getTerms, getTopics, slugOf } from '../../../lib/data';
+import { mentioned } from '../../../lib/glossary.mjs';
+import { t, type Lang } from '../../../i18n/ui';
+
+export async function getStaticPaths() {
+  const out = [];
+  for (const lang of ['en', 'fa'] as Lang[]) {
+    const terms = await getTerms(lang);
+    const topics = await getTopics(lang);
+    for (const entry of terms) {
+      const slug = slugOf(entry);
+      const usedIn = topics.filter((tp) => {
+        const text = [tp.data.title, tp.data.summary, ...tp.data.covers, ...tp.data.interview_qs, tp.body ?? ''].join('\n');
+        return mentioned(text, lang).has(slug);
+      }).map((tp) => ({ tid: tp.data.tid, title: tp.data.title }));
+      out.push({ params: { lang, term: slug }, props: { entry, usedIn, terms } });
+    }
+  }
+  return out;
+}
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const { entry, usedIn, terms } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const bySlug = new Map(terms.map((x: any) => [slugOf(x), x]));
+const related = d.related.filter((r: string) => bySlug.has(r));
+---
+<Base lang={lang} title={d.term} description={d.short} path={`glossary/${Astro.params.term}/`}>
+  <main class="mx-auto max-w-3xl px-4 py-10" data-pagefind-body>
+    <nav class="mb-3 text-sm" style="color:var(--fg-muted)"><a class="hover:underline" href={`/${lang}/glossary/`}>← {s.glossaryTitle}</a></nav>
+    <div class="flex items-center gap-2"><span class="chip">{d.category}</span></div>
+    <h1 class="mt-3 text-4xl font-extrabold tracking-tight" data-pagefind-meta="title">{d.term}</h1>
+    <p class="mt-3 text-xl leading-relaxed" style="color:var(--fg-muted)">{d.short}</p>
+    <article class="prose prose-lg mt-8 max-w-none dark:prose-invert"><Content /></article>
+
+    {related.length > 0 && (
+      <section class="mt-10">
+        <h2 class="mb-3 text-lg font-bold">{s.relatedTerms}</h2>
+        <div class="flex flex-wrap gap-2">{related.map((r: string) => <a class="chip hover:border-[var(--accent)]" href={`/${lang}/glossary/${r}/`} data-tip={(bySlug.get(r) as any).data.short}>{(bySlug.get(r) as any).data.term}</a>)}</div>
+      </section>
+    )}
+    {usedIn.length > 0 && (
+      <section class="mt-8">
+        <h2 class="mb-3 text-lg font-bold">{s.usedIn}</h2>
+        <ul class="grid gap-1.5 text-sm">{usedIn.map((u: any) => <li><a class="underline" href={`/${lang}/topics/${u.tid}/`}>{u.title}</a></li>)}</ul>
+      </section>
+    )}
+  </main>
+</Base>

@@ -1,0 +1,38 @@
+---
+import { trackTitle, tracks, type Topic } from '../lib/data';
+import { t, faDigits, type Lang } from '../i18n/ui';
+const { lang, topics, currentTrack, currentTid } = Astro.props as { lang: Lang; topics: Topic[]; currentTrack?: string; currentTid?: string };
+const s = t(lang);
+---
+<aside class="hidden w-72 shrink-0 lg:block">
+  <div class="sticky top-16 max-h-[calc(100vh-5rem)] overflow-y-auto pe-2 pb-8 text-sm">
+    {tracks.map((tr) => {
+      const list = topics.filter((x) => x.data.track === tr.id);
+      return (
+        <details open={tr.id === currentTrack} class="group mb-1">
+          <summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg px-2 py-1.5 font-semibold hover:bg-[var(--bg-soft)]">
+            <span class="grid h-5 w-5 place-items-center rounded-md text-[10px]" style="background:var(--accent-soft);color:var(--accent)">{faDigits(tr.id, lang)}</span>
+            <a href={`/${lang}/tracks/${tr.id}/`} class="flex-1 leading-snug">{trackTitle(tr, lang)}</a>
+            <svg class="h-3 w-3 transition group-open:rotate-90 rtl:rotate-180 rtl:group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 6 6 6-6 6"/></svg>
+          </summary>
+          <ul class="ms-4 mt-1 border-s ps-2" style="border-color:var(--border)">
+            {list.map((x) => (
+              <li>
+                <a href={`/${lang}/topics/${x.data.tid}/`} data-tid={x.data.tid}
+                   class={`topic-link flex items-start gap-2 rounded-md px-2 py-1 leading-snug hover:bg-[var(--bg-soft)] ${x.data.tid === currentTid ? 'font-semibold' : ''}`}
+                   style={x.data.tid === currentTid ? 'background:var(--accent-soft);color:var(--accent)' : 'color:var(--fg-muted)'}>
+                  <span class="mt-1 inline-block h-2 w-2 shrink-0 rounded-full border state-dot" style="border-color:var(--border)"></span>
+                  <span>{x.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      );
+    })}
+  </div>
+</aside>
+<style is:global>
+  .topic-link[data-state='read'] .state-dot { background: var(--accent); border-color: var(--accent); }
+  .topic-link[data-state='known'] .state-dot { background: #6366f1; border-color: #6366f1; }
+</style>

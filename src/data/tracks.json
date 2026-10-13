@@ -1,0 +1,160 @@
+[
+  {
+    "id": "0",
+    "title_en": "Interview Guide",
+    "title_fa": "راهنمای مصاحبه",
+    "weight": 3,
+    "intro_en": "Before anything else, understand what the interview measures. This is the equivalent of HelloInterview's \"In a Hurry\" section.",
+    "intro_fa": "قبل از هر چیز باید بدانی مصاحبه چه چیزی را می‌سنجد. این بخش معادل «In a Hurry» در HelloInterview است."
+  },
+  {
+    "id": "1",
+    "title_en": "CS & Engineering Foundations",
+    "title_fa": "پایه‌های علوم کامپیوتر و مهندسی",
+    "weight": 2,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "2",
+    "title_en": "SQL",
+    "title_fa": "اس‌کیو‌ال",
+    "weight": 5,
+    "intro_en": "The single most tested skill. Almost every company has a live SQL round. Goal: solve Medium/Hard problems in under 15 minutes while thinking aloud.",
+    "intro_fa": "مهم‌ترین مهارت قابل‌آزمون. تقریباً همه‌ی شرکت‌ها یک مرحله‌ی SQL زنده دارند. هدف: حل مسائل Medium/Hard در کمتر از ۱۵ دقیقه، با توضیح بلند."
+  },
+  {
+    "id": "3",
+    "title_en": "Python & Coding",
+    "title_fa": "پایتون و کدنویسی",
+    "weight": 3,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "4",
+    "title_en": "Database Internals & Storage",
+    "title_fa": "معماری داخلی پایگاه داده",
+    "weight": 4,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "5",
+    "title_en": "Distributed Systems Theory",
+    "title_fa": "تئوری سیستم‌های توزیع‌شده",
+    "weight": 4,
+    "intro_en": "Primary source: DDIA. Seniors must explain the \"why\" behind Kafka and Spark behavior using these concepts.",
+    "intro_fa": "منبع اصلی: کتاب DDIA. سنیورها باید بتوانند «چرا» پشت رفتار Kafka و Spark را با این مفاهیم توضیح دهند."
+  },
+  {
+    "id": "6",
+    "title_en": "Data Modeling",
+    "title_fa": "مدل‌سازی داده",
+    "weight": 5,
+    "intro_en": "Alongside SQL, the topic where hands-on experience alone is not enough. Seniors must define grain and defend their choices.",
+    "intro_fa": "در کنار SQL، مهم‌ترین مبحثی که تجربه‌ی عملی به‌تنهایی برایش کافی نیست. سنیور باید بتواند grain را تعریف کند و از انتخاب‌هایش دفاع کند."
+  },
+  {
+    "id": "7",
+    "title_en": "Batch Processing (Hadoop & Spark)",
+    "title_fa": "پردازش دسته‌ای",
+    "weight": 5,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "8",
+    "title_en": "Messaging & Stream Processing",
+    "title_fa": "پیام‌رسانی و پردازش جریانی",
+    "weight": 5,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "9",
+    "title_en": "Data Ingestion & Integration",
+    "title_fa": "دریافت و یکپارچه‌سازی داده",
+    "weight": 4,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "10",
+    "title_en": "Warehouses, Lakes & Lakehouse",
+    "title_fa": "انبار، دریاچه و لیک‌هاوس",
+    "weight": 4,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "11",
+    "title_en": "Orchestration & Transformation",
+    "title_fa": "ارکستراسیون و تبدیل داده",
+    "weight": 4,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "12",
+    "title_en": "Data Quality, Observability & Governance",
+    "title_fa": "کیفیت، مشاهده‌پذیری و حاکمیت داده",
+    "weight": 3,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "13",
+    "title_en": "Infrastructure & Platform",
+    "title_fa": "زیرساخت و پلتفرم",
+    "weight": 3,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "14",
+    "title_en": "Data System Design",
+    "title_fa": "طراحی سیستم داده",
+    "weight": 5,
+    "intro_en": "The most important part for senior. Equivalent to HelloInterview's \"Patterns\" and \"Problem Breakdowns\". Each problem page will include: requirements, estimation, data model, architecture, deep dives, per-level expectations (Mid / Senior / Staff), and interviewer follow-ups.",
+    "intro_fa": "مهم‌ترین بخش برای سنیور. معادل «Patterns» و «Problem Breakdowns» در HelloInterview. هر مسئله در سایت شامل: نیازمندی‌ها، تخمین، مدل داده، معماری، Deep Diveها، انتظارات هر سطح (Mid / Senior / Staff)، و سؤال‌های پیگیری مصاحبه‌گر خواهد بود.",
+    "sections": [
+      {
+        "id": "14A",
+        "title_en": "Core Building Blocks",
+        "title_fa": "اجزای پایه"
+      },
+      {
+        "id": "14B",
+        "title_en": "Patterns",
+        "title_fa": "الگوها"
+      },
+      {
+        "id": "14C",
+        "title_en": "Problem Breakdowns",
+        "title_fa": "مسائل کامل مصاحبه"
+      },
+      {
+        "id": "14D",
+        "title_en": "In the Wild (Case Studies)",
+        "title_fa": "مطالعه‌ی موردی"
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "title_en": "ML & AI Data Engineering",
+    "title_fa": "مهندسی داده برای ML و AI",
+    "weight": 2,
+    "intro_en": "",
+    "intro_fa": ""
+  },
+  {
+    "id": "16",
+    "title_en": "Behavioral & Leadership",
+    "title_fa": "رفتاری و رهبری",
+    "weight": 4,
+    "intro_en": "",
+    "intro_fa": ""
+  }
+]

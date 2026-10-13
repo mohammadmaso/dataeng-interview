@@ -1,0 +1,117 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import Badges from '../../../components/Badges.astro';
+import { getTopics, isStub, tracks, trackTitle } from '../../../lib/data';
+import { linkText } from '../../../lib/glossary.mjs';
+import { t, faDigits, type Lang } from '../../../i18n/ui';
+import qIndex from '../../../data/question-index.json';
+
+export async function getStaticPaths() {
+  const out = [];
+  for (const lang of ['en', 'fa'] as Lang[]) {
+    const topics = await getTopics(lang);
+    topics.forEach((entry, i) => out.push({ params: { lang, tid: entry.data.tid }, props: { entry, prev: topics[i - 1], next: topics[i + 1] } }));
+  }
+  return out;
+}
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const { entry, prev, next } = Astro.props;
+const d = entry.data;
+const all = await getTopics(lang);
+const tr = tracks.find((x) => x.id === d.track)!;
+const stub = isStub(entry);
+const { Content, headings } = await render(entry);
+const n = (x: number | string) => faDigits(x, lang);
+const byId = new Map(all.map((x) => [x.data.tid, x]));
+const chapters = (qIndex as any[]).filter((c) => c.topics.includes(d.tid));
+const used = new Set<string>();
+const lt = (txt: string) => linkText(txt, lang, used);
+const extraLabel: Record<string, string> = lang === 'fa'
+  ? { practice: 'تمرین', problems: 'مسئله‌ها', patterns: 'الگوها', categories: 'دسته‌ها', candidates: 'نمونه‌ها', template: 'قالب' }
+  : { practice: 'Practice', problems: 'Problems', patterns: 'Patterns', categories: 'Categories', candidates: 'Candidates', template: 'Template' };
+---
+<Base lang={lang} title={d.title} description={d.summary} path={`topics/${d.tid}/`}>
+  <div class="mx-auto flex max-w-7xl gap-8 px-4 py-8">
+    <Sidebar lang={lang} topics={all} currentTrack={d.track} currentTid={d.tid} />
+    <main class="min-w-0 flex-1" data-pagefind-body>
+      <nav class="mb-3 text-sm" style="color:var(--fg-muted)">
+        <a href={`/${lang}/`} class="hover:underline">{s.home}</a> /
+        <a href={`/${lang}/tracks/${tr.id}/`} class="hover:underline">{trackTitle(tr, lang)}</a>
+      </nav>
+      <div class="text-sm font-semibold" style="color:var(--accent)">{n(d.num)}</div>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight md:text-4xl" data-pagefind-meta="title">{d.title}</h1>
+      <div class="mt-3"><Badges lang={lang} level={d.level} priority={d.priority} type={d.type} hours={d.est_hours} /></div>
+      <p class="mt-5 max-w-3xl text-lg leading-relaxed" set:html={lt(d.summary)} />
+
+      <div class="mt-5 flex flex-wrap gap-2" data-tid={d.tid}>
+        <button data-toggle="read" data-id={d.tid} data-on={s.markedRead} data-off={s.markRead} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">{s.markRead}</button>
+        <button data-toggle="known" data-id={d.tid} data-on={s.known} data-off={s.iKnow} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">{s.iKnow}</button>
+      </div>
+
+      {stub ? (
+        <div class="mt-8 card p-5" style="background:var(--accent-soft)">
+          <div class="font-semibold">🚧 {s.comingSoon}</div>
+          <p class="mt-1 text-sm" style="color:var(--fg-muted)">{s.comingSoonBody}</p>
+        </div>
+      ) : (
+        <article class="prose prose-lg mt-8 max-w-none dark:prose-invert"><Content /></article>
+      )}
+
+      {d.covers.length > 0 && (
+        <section class="mt-8">
+          <h2 class="mb-3 text-xl font-bold">{s.covers}</h2>
+          <ul class="flex flex-wrap gap-2">
+            {d.covers.map((c) => <li class="rounded-lg border px-3 py-1.5 text-sm" style="border-color:var(--border);background:var(--bg-soft)" set:html={lt(c)} />)}
+          </ul>
+        </section>
+      )}
+
+      {d.interview_qs.length > 0 && (
+        <section class="mt-8">
+          <h2 class="mb-3 text-xl font-bold">{s.interviewQs}</h2>
+          <ul class="grid gap-2">
+            {d.interview_qs.map((q) => <li class="card flex gap-3 p-3 text-sm"><span style="color:var(--accent)">Q</span><span set:html={lt(q)} /></li>)}
+          </ul>
+        </section>
+      )}
+
+      {d.extras.map((ex) => (
+        <section class="mt-8">
+          <h2 class="mb-3 text-xl font-bold">{extraLabel[ex.label] ?? ex.label}</h2>
+          <ol class="grid list-decimal gap-1.5 ps-6 text-sm">{ex.items.map((it) => <li set:html={lt(it)} />)}</ol>
+        </section>
+      ))}
+
+      {chapters.length > 0 && (
+        <section class="mt-10">
+          <h2 class="mb-3 text-xl font-bold">{s.qbForTopic}</h2>
+          <div class="grid gap-3 sm:grid-cols-2">
+            {chapters.map((c) => (
+              <a href={`/${lang}/questions/${c.slug}/`} class="card card-hover flex items-center justify-between p-4">
+                <span class="font-semibold">{c.title}</span>
+                <span class="chip">{n(c.count)} {s.qbCount}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(d.prerequisites.length > 0 || d.related.length > 0) && (
+        <section class="mt-10 grid gap-6 sm:grid-cols-2">
+          {[[s.prerequisites, d.prerequisites], [s.related, d.related]].map(([label, ids]) => (ids as string[]).length > 0 && (
+            <div><h3 class="mb-2 font-semibold">{label}</h3>
+              <ul class="grid gap-1 text-sm">{(ids as string[]).map((id) => byId.get(id) && <li><a class="underline" href={`/${lang}/topics/${id}/`}>{byId.get(id)!.data.title}</a></li>)}</ul></div>
+          ))}
+        </section>
+      )}
+
+      <nav class="mt-12 grid gap-3 sm:grid-cols-2">
+        {prev ? <a href={`/${lang}/topics/${prev.data.tid}/`} class="card card-hover p-4"><div class="text-xs" style="color:var(--fg-muted)">← {s.prev}</div><div class="font-semibold">{prev.data.title}</div></a> : <span />}
+        {next ? <a href={`/${lang}/topics/${next.data.tid}/`} class="card card-hover p-4 sm:text-end"><div class="text-xs" style="color:var(--fg-muted)">{s.next} →</div><div class="font-semibold">{next.data.title}</div></a> : <span />}
+      </nav>
+    </main>
+  </div>
+</Base>

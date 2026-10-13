@@ -1,0 +1,464 @@
+[
+ {
+  "slug": "sql",
+  "title": "SQL",
+  "vol": 1,
+  "count": 464,
+  "topics": [
+   "sql-interview-patterns",
+   "sql-indexing",
+   "sql-recursive-ctes",
+   "sql-fundamentals",
+   "sql-dialects",
+   "sql-transactions",
+   "sql-subqueries-ctes",
+   "sql-window-functions",
+   "sql-nulls",
+   "sql-query-optimization",
+   "sql-advanced-grouping",
+   "sql-datetime",
+   "sql-joins",
+   "sql-ddl-merge"
+  ]
+ },
+ {
+  "slug": "data-structure",
+  "title": "Data Structures",
+  "vol": 1,
+  "count": 220,
+  "topics": [
+   "dsa-for-de",
+   "probabilistic-ds"
+  ]
+ },
+ {
+  "slug": "python",
+  "title": "Python for Data Engineering",
+  "vol": 1,
+  "count": 12,
+  "topics": [
+   "python-core",
+   "pyspark-api",
+   "python-concurrency",
+   "jvm-languages-for-de",
+   "python-dataframes",
+   "de-coding-patterns",
+   "python-production",
+   "python-large-files"
+  ]
+ },
+ {
+  "slug": "system-design",
+  "title": "Data System Design",
+  "vol": 1,
+  "count": 11,
+  "topics": [
+   "pattern-reconciliation",
+   "design-iot-platform",
+   "design-dq-platform",
+   "design-telco-cdr",
+   "design-ad-click-aggregator",
+   "design-feature-store",
+   "design-platform-from-scratch",
+   "pattern-history",
+   "design-hadoop-migration",
+   "pattern-batch-etl",
+   "pattern-hot-keys",
+   "pattern-cdc-analytics",
+   "design-top-k",
+   "design-ride-hailing-analytics",
+   "pattern-dedup",
+   "case-studies",
+   "pattern-serving",
+   "design-ecommerce-dwh",
+   "pattern-schema-evolution",
+   "design-leaderboard",
+   "reference-architecture",
+   "pattern-data-deletion",
+   "pattern-backfill",
+   "design-payment-reconciliation",
+   "design-log-platform",
+   "design-crawler-pipeline",
+   "design-user-deletion",
+   "design-campaign-analytics",
+   "design-metrics-monitoring",
+   "tech-selection",
+   "design-clickstream-analytics",
+   "design-fraud-detection",
+   "pattern-realtime-aggregation",
+   "data-estimation",
+   "pattern-exactly-once",
+   "pattern-multi-tenant",
+   "design-unique-counts",
+   "design-cdc-lake",
+   "design-search-indexing",
+   "pattern-lambda-kappa",
+   "pattern-late-data"
+  ]
+ },
+ {
+  "slug": "dwha",
+  "title": "Data Warehousing Architecture",
+  "vol": 2,
+  "count": 281,
+  "topics": [
+   "dwh-fundamentals",
+   "mpp-architecture",
+   "oltp-vs-olap",
+   "columnar-storage",
+   "data-lake-object-storage"
+  ]
+ },
+ {
+  "slug": "data-modeling",
+  "title": "Data Modeling",
+  "vol": 2,
+  "count": 15,
+  "topics": [
+   "physical-modeling-olap",
+   "star-snowflake-obt",
+   "schema-evolution",
+   "dimensional-modeling",
+   "modeling-levels",
+   "advanced-dimensions",
+   "modeling-problems",
+   "scd",
+   "fact-table-types",
+   "event-modeling",
+   "semantic-layer",
+   "normalization",
+   "modeling-methodologies",
+   "nosql-modeling"
+  ]
+ },
+ {
+  "slug": "redshift",
+  "title": "Amazon Redshift",
+  "vol": 2,
+  "count": 100,
+  "topics": [
+   "cloud-warehouses"
+  ]
+ },
+ {
+  "slug": "bigquery",
+  "title": "Google BigQuery",
+  "vol": 2,
+  "count": 80,
+  "topics": [
+   "cloud-warehouses"
+  ]
+ },
+ {
+  "slug": "greenplum",
+  "title": "Greenplum",
+  "vol": 2,
+  "count": 100,
+  "topics": [
+   "mpp-architecture"
+  ]
+ },
+ {
+  "slug": "hive",
+  "title": "Apache Hive",
+  "vol": 2,
+  "count": 94,
+  "topics": [
+   "hadoop-ecosystem"
+  ]
+ },
+ {
+  "slug": "cassandra",
+  "title": "Apache Cassandra",
+  "vol": 2,
+  "count": 78,
+  "topics": [
+   "nosql-families",
+   "nosql-modeling",
+   "storage-engines"
+  ]
+ },
+ {
+  "slug": "hbase",
+  "title": "Apache HBase",
+  "vol": 2,
+  "count": 94,
+  "topics": [
+   "nosql-families",
+   "nosql-modeling",
+   "hadoop-ecosystem"
+  ]
+ },
+ {
+  "slug": "bigtable",
+  "title": "Google Bigtable",
+  "vol": 2,
+  "count": 100,
+  "topics": [
+   "nosql-families"
+  ]
+ },
+ {
+  "slug": "mongo",
+  "title": "MongoDB",
+  "vol": 2,
+  "count": 30,
+  "topics": [
+   "nosql-families"
+  ]
+ },
+ {
+  "slug": "hadoop",
+  "title": "Apache Hadoop",
+  "vol": 3,
+  "count": 205,
+  "topics": [
+   "hadoop-ecosystem",
+   "mapreduce",
+   "small-files"
+  ]
+ },
+ {
+  "slug": "spark",
+  "title": "Apache Spark",
+  "vol": 3,
+  "count": 241,
+  "topics": [
+   "spark-writes",
+   "spark-caching",
+   "spark-aqe",
+   "spark-on-kubernetes",
+   "spark-ui-debugging",
+   "spark-structured-streaming",
+   "spark-architecture",
+   "spark-memory-tuning",
+   "spark-joins-skew",
+   "spark-shuffle",
+   "spark-catalyst",
+   "pyspark-api",
+   "small-files"
+  ]
+ },
+ {
+  "slug": "flink",
+  "title": "Apache Flink",
+  "vol": 3,
+  "count": 75,
+  "topics": [
+   "flink",
+   "stream-concepts",
+   "streaming-state",
+   "stream-joins"
+  ]
+ },
+ {
+  "slug": "kafka",
+  "title": "Apache Kafka",
+  "vol": 3,
+  "count": 23,
+  "topics": [
+   "kafka-architecture",
+   "kafka-retention-compaction",
+   "kafka-streams",
+   "kafka-consumers",
+   "kafka-exactly-once",
+   "kafka-producers",
+   "kafka-connect-ops",
+   "queues-vs-logs",
+   "schema-registry"
+  ]
+ },
+ {
+  "slug": "impala",
+  "title": "Apache Impala",
+  "vol": 3,
+  "count": 45,
+  "topics": [
+   "hadoop-ecosystem",
+   "trino"
+  ]
+ },
+ {
+  "slug": "airflow",
+  "title": "Apache Airflow",
+  "vol": 3,
+  "count": 18,
+  "topics": [
+   "airflow",
+   "orchestration-concepts"
+  ]
+ },
+ {
+  "slug": "nifi",
+  "title": "Apache NiFi",
+  "vol": 3,
+  "count": 15,
+  "topics": [
+   "ingestion-tools",
+   "file-ingestion"
+  ]
+ },
+ {
+  "slug": "flume",
+  "title": "Apache Flume",
+  "vol": 3,
+  "count": 26,
+  "topics": [
+   "ingestion-tools",
+   "file-ingestion"
+  ]
+ },
+ {
+  "slug": "avro",
+  "title": "Apache Avro",
+  "vol": 3,
+  "count": 24,
+  "topics": [
+   "data-formats",
+   "schema-registry",
+   "schema-evolution"
+  ]
+ },
+ {
+  "slug": "iceberg",
+  "title": "Apache Iceberg",
+  "vol": 3,
+  "count": 15,
+  "topics": [
+   "lakehouse-table-formats",
+   "catalogs"
+  ]
+ },
+ {
+  "slug": "hudi",
+  "title": "Apache Hudi",
+  "vol": 3,
+  "count": 12,
+  "topics": [
+   "lakehouse-table-formats"
+  ]
+ },
+ {
+  "slug": "aws",
+  "title": "Amazon Web Services",
+  "vol": 4,
+  "count": 60,
+  "topics": [
+   "cloud-warehouses"
+  ]
+ },
+ {
+  "slug": "gcp",
+  "title": "Google Cloud Platform",
+  "vol": 4,
+  "count": 55,
+  "topics": [
+   "cloud-warehouses"
+  ]
+ },
+ {
+  "slug": "azure",
+  "title": "Microsoft Azure",
+  "vol": 4,
+  "count": 48,
+  "topics": [
+   "cloud-warehouses"
+  ]
+ },
+ {
+  "slug": "kubernetes",
+  "title": "Kubernetes",
+  "vol": 4,
+  "count": 25,
+  "topics": [
+   "kubernetes-for-data",
+   "spark-on-kubernetes",
+   "docker"
+  ]
+ },
+ {
+  "slug": "dbt",
+  "title": "dbt",
+  "vol": 4,
+  "count": 15,
+  "topics": [
+   "dbt"
+  ]
+ },
+ {
+  "slug": "cdc",
+  "title": "Change Data Capture (CDC)",
+  "vol": 4,
+  "count": 15,
+  "topics": [
+   "cdc"
+  ]
+ },
+ {
+  "slug": "data-quality",
+  "title": "Data Quality",
+  "vol": 4,
+  "count": 15,
+  "topics": [
+   "data-quality"
+  ]
+ },
+ {
+  "slug": "observability",
+  "title": "Data Observability",
+  "vol": 4,
+  "count": 12,
+  "topics": [
+   "data-observability",
+   "pipeline-monitoring"
+  ]
+ },
+ {
+  "slug": "data-governance",
+  "title": "Data Governance",
+  "vol": 4,
+  "count": 12,
+  "topics": [
+   "governance-contracts-mesh",
+   "data-security",
+   "data-catalogs"
+  ]
+ },
+ {
+  "slug": "cost-optimization",
+  "title": "Cost Optimization",
+  "vol": 4,
+  "count": 12,
+  "topics": [
+   "capacity-planning"
+  ]
+ },
+ {
+  "slug": "tableau",
+  "title": "Tableau",
+  "vol": 4,
+  "count": 37,
+  "topics": [
+   "bi-analytics-engineering"
+  ]
+ },
+ {
+  "slug": "looker",
+  "title": "Looker",
+  "vol": 4,
+  "count": 82,
+  "topics": [
+   "bi-analytics-engineering",
+   "semantic-layer"
+  ]
+ },
+ {
+  "slug": "superset",
+  "title": "Apache Superset",
+  "vol": 4,
+  "count": 73,
+  "topics": [
+   "bi-analytics-engineering"
+  ]
+ }
+]

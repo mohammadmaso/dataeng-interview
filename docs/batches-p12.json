@@ -1,0 +1,373 @@
+[
+ {
+  "id": "b01",
+  "track": "1",
+  "topics": [
+   "linux-shell",
+   "networking-essentials",
+   "git-workflow",
+   "dsa-for-de"
+  ],
+  "questionChapters": [
+   "data-structure"
+  ]
+ },
+ {
+  "id": "b02",
+  "track": "1",
+  "topics": [
+   "probabilistic-ds",
+   "compression",
+   "encoding-persian-data",
+   "os-jvm-essentials"
+  ],
+  "questionChapters": [
+   "data-structure"
+  ]
+ },
+ {
+  "id": "b03",
+  "track": "2",
+  "topics": [
+   "sql-recursive-ctes",
+   "sql-advanced-grouping",
+   "sql-transactions",
+   "sql-dialects"
+  ],
+  "questionChapters": [
+   "sql"
+  ]
+ },
+ {
+  "id": "b04",
+  "track": "3",
+  "topics": [
+   "python-concurrency",
+   "python-dataframes",
+   "python-production",
+   "jvm-languages-for-de"
+  ],
+  "questionChapters": [
+   "python"
+  ]
+ },
+ {
+  "id": "b05",
+  "track": "4",
+  "topics": [
+   "storage-engines",
+   "wal-mvcc",
+   "postgresql",
+   "nosql-families"
+  ],
+  "questionChapters": [
+   "cassandra",
+   "hbase",
+   "bigtable",
+   "mongo"
+  ]
+ },
+ {
+  "id": "b06",
+  "track": "5",
+  "topics": [
+   "consistency-models",
+   "consensus",
+   "distributed-transactions",
+   "time-and-ordering"
+  ],
+  "questionChapters": []
+ },
+ {
+  "id": "b07",
+  "track": "5",
+  "topics": [
+   "backpressure",
+   "fault-tolerance"
+  ],
+  "questionChapters": []
+ },
+ {
+  "id": "b08",
+  "track": "6",
+  "topics": [
+   "modeling-levels",
+   "advanced-dimensions",
+   "modeling-methodologies",
+   "nosql-modeling"
+  ],
+  "questionChapters": [
+   "data-modeling",
+   "cassandra",
+   "hbase"
+  ]
+ },
+ {
+  "id": "b09",
+  "track": "6",
+  "topics": [
+   "event-modeling",
+   "semantic-layer"
+  ],
+  "questionChapters": [
+   "data-modeling",
+   "looker"
+  ]
+ },
+ {
+  "id": "b10",
+  "track": "7",
+  "topics": [
+   "mapreduce",
+   "hadoop-ecosystem",
+   "spark-aqe",
+   "spark-caching"
+  ],
+  "questionChapters": [
+   "hive",
+   "hbase",
+   "hadoop",
+   "spark",
+   "impala"
+  ]
+ },
+ {
+  "id": "b11",
+  "track": "7",
+  "topics": [
+   "spark-on-kubernetes",
+   "other-batch-engines",
+   "seatunnel"
+  ],
+  "questionChapters": [
+   "spark",
+   "kubernetes"
+  ]
+ },
+ {
+  "id": "b12",
+  "track": "8",
+  "topics": [
+   "kafka-retention-compaction",
+   "schema-registry",
+   "kafka-connect-ops",
+   "spark-structured-streaming"
+  ],
+  "questionChapters": [
+   "spark",
+   "kafka",
+   "avro"
+  ]
+ },
+ {
+  "id": "b13",
+  "track": "8",
+  "topics": [
+   "kafka-streams",
+   "stream-joins",
+   "other-messaging"
+  ],
+  "questionChapters": [
+   "flink",
+   "kafka"
+  ]
+ },
+ {
+  "id": "b14",
+  "track": "9",
+  "topics": [
+   "api-ingestion",
+   "ingestion-tools"
+  ],
+  "questionChapters": [
+   "nifi",
+   "flume"
+  ]
+ },
+ {
+  "id": "b15",
+  "track": "10",
+  "topics": [
+   "catalogs",
+   "starrocks-doris",
+   "realtime-olap",
+   "trino"
+  ],
+  "questionChapters": [
+   "impala",
+   "iceberg"
+  ]
+ },
+ {
+  "id": "b16",
+  "track": "10",
+  "topics": [
+   "cloud-warehouses",
+   "serving-layer",
+   "time-series-db"
+  ],
+  "questionChapters": [
+   "redshift",
+   "bigquery",
+   "aws",
+   "gcp",
+   "azure"
+  ]
+ },
+ {
+  "id": "b17",
+  "track": "11",
+  "topics": [
+   "orchestrator-alternatives"
+  ],
+  "questionChapters": []
+ },
+ {
+  "id": "b18",
+  "track": "12",
+  "topics": [
+   "data-observability",
+   "data-lineage",
+   "data-catalogs",
+   "governance-contracts-mesh"
+  ],
+  "questionChapters": [
+   "observability",
+   "data-governance"
+  ]
+ },
+ {
+  "id": "b19",
+  "track": "12",
+  "topics": [
+   "data-security",
+   "data-retention"
+  ],
+  "questionChapters": [
+   "data-governance"
+  ]
+ },
+ {
+  "id": "b20",
+  "track": "13",
+  "topics": [
+   "docker",
+   "kubernetes-for-data",
+   "dataops-cicd",
+   "onprem-iran"
+  ],
+  "questionChapters": [
+   "kubernetes"
+  ]
+ },
+ {
+  "id": "b21",
+  "track": "13",
+  "topics": [
+   "yarn-vs-k8s"
+  ],
+  "questionChapters": []
+ },
+ {
+  "id": "b22",
+  "track": "14",
+  "topics": [
+   "pattern-history",
+   "pattern-serving",
+   "pattern-schema-evolution",
+   "pattern-multi-tenant"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b23",
+  "track": "14",
+  "topics": [
+   "pattern-lambda-kappa",
+   "pattern-data-deletion",
+   "pattern-reconciliation",
+   "design-top-k"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b24",
+  "track": "14",
+  "topics": [
+   "design-metrics-monitoring",
+   "design-log-platform",
+   "design-unique-counts",
+   "design-feature-store"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b25",
+  "track": "14",
+  "topics": [
+   "design-payment-reconciliation",
+   "design-platform-from-scratch",
+   "design-hadoop-migration",
+   "design-search-indexing"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b26",
+  "track": "14",
+  "topics": [
+   "design-leaderboard",
+   "design-campaign-analytics",
+   "design-crawler-pipeline",
+   "design-user-deletion"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b27",
+  "track": "14",
+  "topics": [
+   "design-iot-platform",
+   "design-dq-platform",
+   "case-studies"
+  ],
+  "questionChapters": [
+   "system-design"
+  ]
+ },
+ {
+  "id": "b28",
+  "track": "15",
+  "topics": [
+   "feature-stores",
+   "mlops-data",
+   "llm-data-pipelines",
+   "bi-analytics-engineering"
+  ],
+  "questionChapters": [
+   "tableau",
+   "looker",
+   "superset"
+  ]
+ },
+ {
+  "id": "b29",
+  "track": "16",
+  "topics": [
+   "incidents-postmortems",
+   "questions-to-ask",
+   "negotiation-iran"
+  ],
+  "questionChapters": []
+ }
+]

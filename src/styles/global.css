@@ -1,0 +1,99 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/vazirmatn';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter Variable', 'Vazirmatn Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f8fa;
+  --bg-card: #ffffff;
+  --fg: #0f172a;
+  --fg-muted: #5b6678;
+  --border: #e5e9f0;
+  --accent: #059669;
+  --accent-soft: #ecfdf5;
+  --tip-bg: #0f172a;
+  --tip-fg: #f8fafc;
+}
+.dark {
+  --bg: #0b1017;
+  --bg-soft: #111823;
+  --bg-card: #121a26;
+  --fg: #e6edf6;
+  --fg-muted: #93a1b5;
+  --border: #223044;
+  --accent: #34d399;
+  --accent-soft: #0e2a22;
+  --tip-bg: #e6edf6;
+  --tip-fg: #0b1017;
+}
+
+html { scroll-behavior: smooth; }
+html[lang='fa'] { font-family: 'Vazirmatn Variable', 'Inter Variable', system-ui, sans-serif; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+html[lang='fa'] body { font-family: 'Vazirmatn Variable', 'Inter Variable', system-ui, sans-serif; }
+::selection { background: var(--accent-soft); }
+
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem; }
+.card-hover { transition: border-color .15s, box-shadow .15s, transform .15s; }
+.card-hover:hover { border-color: var(--accent); box-shadow: 0 6px 24px -12px rgb(5 150 105 / .35); transform: translateY(-1px); }
+.chip { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem .55rem; border-radius: 999px; font-size: .72rem; font-weight: 600; line-height: 1.5; border: 1px solid var(--border); background: var(--bg-soft); color: var(--fg-muted); white-space: nowrap; }
+.chip-beginner { color: #047857; background: #ecfdf5; border-color: #a7f3d0; }
+.chip-intermediate { color: #a16207; background: #fefce8; border-color: #fde68a; }
+.chip-advanced { color: #c2410c; background: #fff7ed; border-color: #fed7aa; }
+.chip-senior { color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
+.chip-P0 { color: #fff; background: var(--accent); border-color: var(--accent); }
+.dark .chip-beginner { background: #0e2a22; color: #6ee7b7; border-color: #14532d; }
+.dark .chip-intermediate { background: #2a2208; color: #fcd34d; border-color: #5b4a0a; }
+.dark .chip-advanced { background: #2d1a0b; color: #fdba74; border-color: #6b3410; }
+.dark .chip-senior { background: #2d1111; color: #fca5a5; border-color: #6b1d1d; }
+.dark .chip-P0 { color: #04120d; }
+
+/* glossary links with hover tooltip */
+a.gloss { color: inherit; text-decoration: underline dotted var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; position: relative; cursor: help; }
+a.gloss:hover, a.gloss:focus-visible { color: var(--accent); }
+a.gloss::after {
+  content: attr(data-tip); position: absolute; z-index: 40; inset-inline-start: 50%; bottom: calc(100% + 8px);
+  width: max-content; max-width: min(320px, 80vw); padding: .5rem .7rem; border-radius: .6rem; font-size: .8rem; line-height: 1.45; font-weight: 400;
+  background: var(--tip-bg); color: var(--tip-fg); box-shadow: 0 8px 30px rgb(0 0 0 / .25);
+  opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(4px); transition: opacity .12s, transform .12s; white-space: normal; text-align: start;
+}
+[dir='rtl'] a.gloss::after { transform: translateX(50%) translateY(4px); }
+a.gloss:hover::after, a.gloss:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+[dir='rtl'] a.gloss:hover::after, [dir='rtl'] a.gloss:focus-visible::after { transform: translateX(50%) translateY(0); }
+a.gloss[data-tip='']::after { display: none; }
+
+/* prose tuning */
+.prose { --tw-prose-body: var(--fg); --tw-prose-headings: var(--fg); --tw-prose-links: var(--accent); --tw-prose-bold: var(--fg); --tw-prose-code: var(--fg); --tw-prose-quotes: var(--fg); --tw-prose-bullets: var(--fg-muted); --tw-prose-counters: var(--fg-muted); --tw-prose-hr: var(--border); --tw-prose-th-borders: var(--border); --tw-prose-td-borders: var(--border); --tw-prose-pre-bg: var(--bg-soft); --tw-prose-pre-code: var(--fg); max-width: none; }
+.prose a.gloss { text-decoration: underline dotted var(--accent); font-weight: inherit; }
+.prose :where(code):not(pre code) { background: var(--bg-soft); border: 1px solid var(--border); padding: .1rem .35rem; border-radius: .4rem; font-weight: 500; }
+.prose :where(code):not(pre code)::before, .prose :where(code):not(pre code)::after { content: none; }
+.prose pre { border: 1px solid var(--border); border-radius: .9rem; }
+.prose pre, .prose pre span { background-color: var(--bg-soft) !important; }
+.dark .prose pre span { color: var(--shiki-dark) !important; }
+html:not(.dark) .prose pre span { color: var(--shiki-light) !important; }
+[dir='rtl'] .prose pre, [dir='rtl'] .prose code { direction: ltr; text-align: left; unicode-bidi: plaintext; }
+
+.skeleton-dot { background: radial-gradient(var(--border) 1px, transparent 1px); background-size: 14px 14px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+.mermaid-box { display: flex; justify-content: center; margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: .9rem; background: var(--bg-soft); overflow-x: auto; direction: ltr; }
+.mermaid-box svg { max-width: 100%; height: auto; }
+.prose details { border: 1px solid var(--border); border-radius: .8rem; padding: .6rem 1rem; margin: 1rem 0; background: var(--bg-card); }
+.prose details > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.prose details[open] > summary { margin-bottom: .6rem; }
+.prose blockquote { border-inline-start: 4px solid var(--accent); background: var(--accent-soft); border-radius: .6rem; padding: .6rem 1rem; font-style: normal; quotes: none; }
+.prose blockquote p::before, .prose blockquote p::after { content: none; }
+.prose table { display: block; overflow-x: auto; }

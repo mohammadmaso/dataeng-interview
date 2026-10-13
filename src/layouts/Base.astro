@@ -1,0 +1,131 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import { t, dirOf, type Lang } from '../i18n/ui';
+const { lang, title, description, path = '' } = Astro.props as { lang: Lang; title?: string; description?: string; path?: string };
+const s = t(lang);
+const full = title ? `${title} · ${s.siteName}` : `${s.siteName} — ${s.tagline}`;
+const desc = description ?? s.heroSub;
+const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
+---
+<!doctype html>
+<html lang={lang} dir={dirOf(lang)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{full}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(`/en/${path}`, Astro.site).href} />
+    <link rel="alternate" hreflang="fa" href={new URL(`/fa/${path}`, Astro.site).href} />
+    <meta property="og:title" content={full} /><meta property="og:description" content={desc} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      try {
+        var th = localStorage.getItem('de:theme');
+        if (th === 'dark' || (!th && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+        localStorage.setItem('de:lang', document.documentElement.lang);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="min-h-screen antialiased">
+    <Header lang={lang} path={path} />
+    <slot />
+    <footer class="mt-24 border-t py-10 text-center text-sm" style="border-color:var(--border);color:var(--fg-muted)">
+      {s.footer} · <a class="underline" href="https://github.com/mohammadmaso/dataeng-interview">GitHub</a>
+    </footer>
+
+    <dialog id="search-dialog" class="m-auto w-[min(680px,94vw)] rounded-2xl border p-0 backdrop:bg-black/50" style="background:var(--bg);color:var(--fg);border-color:var(--border)">
+      <div class="p-4"><div id="search-root" data-placeholder={s.searchPlaceholder} data-lang={lang}></div></div>
+    </dialog>
+
+    <script is:inline>
+      (function () {
+        var K = { read: 'de:read', known: 'de:known' };
+        var load = function (k) { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) { return []; } };
+        var save = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+        function paint() {
+          var read = load(K.read), known = load(K.known);
+          document.querySelectorAll('[data-tid]').forEach(function (el) {
+            var id = el.getAttribute('data-tid');
+            el.setAttribute('data-state', known.indexOf(id) > -1 ? 'known' : read.indexOf(id) > -1 ? 'read' : 'todo');
+          });
+          document.querySelectorAll('[data-toggle]').forEach(function (b) {
+            var kind = b.getAttribute('data-toggle'), id = b.getAttribute('data-id');
+            var on = (kind === 'read' ? read : known).indexOf(id) > -1;
+            b.setAttribute('aria-pressed', on);
+            b.textContent = on ? b.getAttribute('data-on') : b.getAttribute('data-off');
+            b.style.background = on ? 'var(--accent)' : 'transparent';
+            b.style.color = on ? '#fff' : 'var(--fg)';
+          });
+          document.querySelectorAll('[data-track-progress]').forEach(function (el) {
+            var ids = el.getAttribute('data-track-progress').split(',');
+            var n = ids.filter(function (i) { return read.indexOf(i) > -1 || known.indexOf(i) > -1; }).length;
+            var pct = ids.length ? Math.round((n / ids.length) * 100) : 0;
+            var bar = el.querySelector('[data-bar]'); if (bar) bar.style.width = pct + '%';
+            var lbl = el.querySelector('[data-label]'); if (lbl) lbl.textContent = n + ' / ' + ids.length;
+          });
+          document.querySelectorAll('[data-hours-left]').forEach(function (el) {
+            var map = JSON.parse(el.getAttribute('data-hours-left'));
+            var left = 0; for (var id in map) if (known.indexOf(id) < 0 && read.indexOf(id) < 0) left += map[id];
+            el.textContent = left;
+          });
+        }
+        document.addEventListener('click', function (e) {
+          var b = e.target.closest && e.target.closest('[data-toggle]');
+          if (!b) return;
+          var key = K[b.getAttribute('data-toggle')], id = b.getAttribute('data-id'), arr = load(key), i = arr.indexOf(id);
+          if (i > -1) arr.splice(i, 1); else arr.push(id);
+          save(key, arr); paint();
+        });
+        var tt = document.getElementById('theme-toggle');
+        if (tt) tt.addEventListener('click', function () {
+          var d = document.documentElement.classList.toggle('dark');
+          try { localStorage.setItem('de:theme', d ? 'dark' : 'light'); } catch (e) {}
+        });
+        // search
+        var dlg = document.getElementById('search-dialog'), loaded = false;
+        function openSearch() {
+          if (!dlg.open) dlg.showModal();
+          if (loaded) return; loaded = true;
+          var root = document.getElementById('search-root');
+          var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/pagefind/pagefind-ui.css'; document.head.appendChild(css);
+          var js = document.createElement('script'); js.src = '/pagefind/pagefind-ui.js';
+          js.onload = function () {
+            new PagefindUI({ element: '#search-root', showSubResults: true, autofocus: true, resetStyles: false,
+              translations: { placeholder: root.getAttribute('data-placeholder') },
+              pageSize: 8, processResult: function (r) { return r; } });
+          };
+          js.onerror = function () { root.textContent = 'Search index is only available in the production build.'; };
+          document.head.appendChild(js);
+        }
+        document.getElementById('open-search').addEventListener('click', openSearch);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
+        });
+        dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+        document.addEventListener('DOMContentLoaded', paint); if (document.readyState !== 'loading') paint();
+      })();
+    </script>
+    <script>
+      const blocks = document.querySelectorAll<HTMLElement>('pre[data-language="mermaid"]');
+      if (blocks.length) {
+        import('mermaid').then(async ({ default: mermaid }) => {
+          const dark = document.documentElement.classList.contains('dark');
+          mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default', securityLevel: 'strict', fontFamily: 'inherit' });
+          let i = 0;
+          for (const pre of blocks) {
+            const src = pre.textContent ?? '';
+            try {
+              const { svg } = await mermaid.render(`mmd-${i++}`, src);
+              const box = document.createElement('div');
+              box.className = 'mermaid-box';
+              box.innerHTML = svg;
+              pre.replaceWith(box);
+            } catch (e) { /* leave source visible */ }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

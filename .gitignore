@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+# raw sources kept locally only (the extracted question bank lives in src/data)
+epub/
+build_epubs.py

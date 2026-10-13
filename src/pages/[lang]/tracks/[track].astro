@@ -1,0 +1,65 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import Badges from '../../../components/Badges.astro';
+import { getTopics, tracks, trackTitle, trackIntro } from '../../../lib/data';
+import { linkText } from '../../../lib/glossary.mjs';
+import { t, faDigits, type Lang } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return ['en', 'fa'].flatMap((lang) => tracks.map((tr) => ({ params: { lang, track: tr.id } })));
+}
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const tr = tracks.find((x) => x.id === Astro.params.track)!;
+const all = await getTopics(lang);
+const list = all.filter((x) => x.data.track === tr.id);
+const n = (x: number | string) => faDigits(x, lang);
+const sections = tr.sections?.length
+  ? tr.sections.map((sec) => ({ title: lang === 'fa' ? sec.title_fa : sec.title_en, items: list.filter((x) => x.data.section === sec.id) }))
+  : [{ title: '', items: list }];
+const hours = list.reduce((a, x) => a + x.data.est_hours, 0);
+---
+<Base lang={lang} title={trackTitle(tr, lang)} description={trackIntro(tr, lang)} path={`tracks/${tr.id}/`}>
+  <div class="mx-auto flex max-w-7xl gap-8 px-4 py-8">
+    <Sidebar lang={lang} topics={all} currentTrack={tr.id} />
+    <main class="min-w-0 flex-1">
+      <nav class="mb-3 text-sm" style="color:var(--fg-muted)"><a href={`/${lang}/`} class="hover:underline">{s.home}</a> / {s.tracks}</nav>
+      <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl">{trackTitle(tr, lang)}</h1>
+      <p class="mt-1 text-sm" style="color:var(--fg-muted)">{n(list.length)} {s.topics} · ~{n(hours)} {s.hoursLong}</p>
+      {trackIntro(tr, lang) && <p class="mt-4 max-w-3xl text-lg" style="color:var(--fg-muted)" set:html={linkText(trackIntro(tr, lang), lang)} />}
+      <div class="mt-5 h-2 max-w-md overflow-hidden rounded-full" style="background:var(--bg-soft)" data-track-progress={list.map((x) => x.data.tid).join(',')}>
+        <div data-bar class="h-full rounded-full" style="background:var(--accent);width:0"></div><span data-label hidden></span>
+      </div>
+
+      {sections.map((sec) => (
+        <section class="mt-8">
+          {sec.title && <h2 class="mb-3 text-xl font-bold">{sec.title}</h2>}
+          <ul class="grid gap-3">
+            {sec.items.map((x) => (
+              <li>
+                <a href={`/${lang}/topics/${x.data.tid}/`} data-tid={x.data.tid} class="card card-hover topic-row flex items-start gap-4 p-4">
+                  <span class="state-ring mt-1 grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 text-[10px]" style="border-color:var(--border)"></span>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-baseline gap-x-2">
+                      <span class="text-xs font-semibold" style="color:var(--accent)">{n(x.data.num)}</span>
+                      <span class="font-semibold">{x.data.title}</span>
+                    </div>
+                    <p class="mt-1 line-clamp-2 text-sm" style="color:var(--fg-muted)">{x.data.summary}</p>
+                    <div class="mt-2"><Badges lang={lang} level={x.data.level} priority={x.data.priority} type={x.data.type} hours={x.data.est_hours} /></div>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </div>
+</Base>
+<style is:global>
+  .topic-row[data-state='read'] .state-ring { background: var(--accent); border-color: var(--accent); }
+  .topic-row[data-state='read'] .state-ring::after { content: '✓'; color: #fff; }
+  .topic-row[data-state='known'] .state-ring { background: #6366f1; border-color: #6366f1; }
+  .topic-row[data-state='known'] .state-ring::after { content: '✓'; color: #fff; }
+</style>

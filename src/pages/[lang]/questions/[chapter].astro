@@ -1,0 +1,71 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { t, faDigits, type Lang } from '../../../i18n/ui';
+import { getTopics } from '../../../lib/data';
+import qIndex from '../../../data/question-index.json';
+
+const files = import.meta.glob('../../../data/questions/*.json', { eager: true }) as Record<string, any>;
+export function getStaticPaths() {
+  return ['en', 'fa'].flatMap((lang) => (qIndex as any[]).map((c) => ({ params: { lang, chapter: c.slug } })));
+}
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const n = (x: number) => faDigits(x, lang);
+const slug = Astro.params.chapter!;
+const data = (Object.entries(files).find(([k]) => k.endsWith(`/${slug}.json`))![1] as any).default ?? Object.entries(files).find(([k]) => k.endsWith(`/${slug}.json`))![1];
+const meta = (qIndex as any[]).find((c) => c.slug === slug);
+const topics = await getTopics(lang);
+const related = topics.filter((x) => meta.topics.includes(x.data.tid));
+const siblings = (qIndex as any[]).filter((c) => c.vol === meta.vol);
+---
+<Base lang={lang} title={`${data.title} — ${s.qbTitle}`} description={`${n(data.questions.length)} ${s.qbCount}`} path={`questions/${slug}/`}>
+  <main class="mx-auto max-w-4xl px-4 py-10">
+    <nav class="mb-3 text-sm" style="color:var(--fg-muted)"><a href={`/${lang}/`} class="hover:underline">{s.home}</a> / <a href={`/${lang}/questions/`} class="hover:underline">{s.qbTitle}</a></nav>
+    <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl" data-pagefind-meta="title">{data.title}</h1>
+    <p class="mt-2" style="color:var(--fg-muted)">{n(data.questions.length)} {s.qbCount}{lang === 'fa' ? ' (پاسخ‌ها انگلیسی)' : ''}</p>
+    {related.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {related.map((x) => <a class="chip hover:border-[var(--accent)]" href={`/${lang}/topics/${x.data.tid}/`}>{x.data.title}</a>)}
+      </div>
+    )}
+    <div class="sticky top-14 z-20 -mx-4 mt-6 flex flex-wrap items-center gap-2 border-b px-4 py-3 backdrop-blur" style="border-color:var(--border);background:color-mix(in srgb,var(--bg) 88%,transparent)">
+      <input id="q-filter" type="search" placeholder={s.qbFilter} class="min-w-0 flex-1 rounded-lg border px-3 py-2 text-sm" style="border-color:var(--border);background:var(--bg-soft);color:var(--fg)" />
+      <span id="q-count" class="text-xs" style="color:var(--fg-muted)"></span>
+      <button id="q-expand" class="rounded-lg border px-3 py-2 text-xs font-semibold" style="border-color:var(--border)">{s.qbExpand}</button>
+      <button id="q-collapse" class="rounded-lg border px-3 py-2 text-xs font-semibold" style="border-color:var(--border)">{s.qbCollapse}</button>
+    </div>
+
+    <ol id="q-list" class="mt-4 grid gap-2" data-pagefind-body>
+      {data.questions.map((q: any, i: number) => (
+        <li class="q-item card" id={q.id} data-q={q.q.toLowerCase()}>
+          <details class="group">
+            <summary class="flex cursor-pointer list-none items-start gap-3 p-4">
+              <span class="mt-0.5 text-xs font-bold tabular-nums" style="color:var(--accent)">{n(i + 1)}</span>
+              <span class="flex-1 font-medium leading-snug" dir="ltr" style="text-align:start">{q.q}</span>
+              <svg class="mt-1 h-3 w-3 shrink-0 transition group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 6 6 6-6 6"/></svg>
+            </summary>
+            <div class="prose max-w-none border-t px-4 py-4 dark:prose-invert" dir="ltr" style="border-color:var(--border);text-align:left" set:html={q.a} />
+          </details>
+        </li>
+      ))}
+    </ol>
+
+    <section class="mt-12 flex flex-wrap gap-2">
+      {siblings.map((c) => <a href={`/${lang}/questions/${c.slug}/`} class={`chip ${c.slug === slug ? 'chip-P0' : ''}`}>{c.title}</a>)}
+    </section>
+    <p class="mt-8 text-sm" style="color:var(--fg-muted)">{s.qbSource} <a class="underline" href="https://github.com/OBenner/data-engineering-interview-questions">OBenner/data-engineering-interview-questions</a>. {s.qbSourceTail}</p>
+  </main>
+  <script is:inline>
+    (function () {
+      var items = [].slice.call(document.querySelectorAll('.q-item')), f = document.getElementById('q-filter'), c = document.getElementById('q-count');
+      function upd() { var v = f.value.trim().toLowerCase(), shown = 0;
+        items.forEach(function (li) { var ok = !v || li.getAttribute('data-q').indexOf(v) > -1; li.style.display = ok ? '' : 'none'; if (ok) shown++; });
+        c.textContent = shown + ' / ' + items.length; }
+      f.addEventListener('input', upd); upd();
+      document.getElementById('q-expand').onclick = function () { items.forEach(function (li) { if (li.style.display !== 'none') li.querySelector('details').open = true; }); };
+      document.getElementById('q-collapse').onclick = function () { items.forEach(function (li) { li.querySelector('details').open = false; }); };
+      function openHash() { var h = location.hash.slice(1); if (!h) return; var el = document.getElementById(h); if (el) { var d = el.querySelector('details'); if (d) d.open = true; el.scrollIntoView({ block: 'center' }); } }
+      openHash(); addEventListener('hashchange', openHash);
+    })();
+  </script>
+</Base>

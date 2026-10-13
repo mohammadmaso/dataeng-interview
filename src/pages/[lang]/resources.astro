@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { resources as r } from '../../data/plan';
+import { t, type Lang } from '../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const fa = lang === 'fa';
+---
+<Base lang={lang} title={s.resourcesTitle} path="resources/">
+  <main class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-4xl font-extrabold tracking-tight">{s.resourcesTitle}</h1>
+    <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'کتاب‌ها' : 'Books'}</h2>
+    <ul class="grid gap-2">
+      {r.books.map((b) => <li class="card flex flex-wrap items-center justify-between gap-2 p-4"><span><strong>{b[0]}</strong>{b[1] && <span style="color:var(--fg-muted)"> — {b[1]}</span>}</span><span class="inline-flex gap-2"><span class={`chip chip-${b[2]}`}>{b[2]}</span><span class="chip">{fa ? b[4] : b[3]}</span></span></li>)}
+    </ul>
+    <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'تمرین' : 'Practice'}</h2>
+    <ul class="grid gap-2">{r.practice.map((p) => <li class="card p-4"><strong>{fa ? p[2] : p[0]}</strong> — <span style="color:var(--fg-muted)">{fa ? p[3] : p[1]}</span></li>)}</ul>
+    <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'مستندات' : 'Docs to skim'}</h2>
+    <p style="color:var(--fg-muted)">{fa ? r.docs_fa : r.docs}</p>
+  </main>
+</Base>
