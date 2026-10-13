@@ -3,6 +3,9 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/vazirmatn';
 
+@font-face { font-family: 'Doran'; src: url('/fonts/doran-medium.woff2') format('woff2'); font-weight: 400 599; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Doran'; src: url('/fonts/doran-bold.woff2') format('woff2'); font-weight: 600 900; font-style: normal; font-display: swap; }
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -97,3 +100,9 @@ html:not(.dark) .prose pre span { color: var(--shiki-light) !important; }
 .prose blockquote { border-inline-start: 4px solid var(--accent); background: var(--accent-soft); border-radius: .6rem; padding: .6rem 1rem; font-style: normal; quotes: none; }
 .prose blockquote p::before, .prose blockquote p::after { content: none; }
 .prose table { display: block; overflow-x: auto; }
+
+/* Titles use Doran (medium/bold); body text keeps Inter / Vazirmatn */
+h1, h2, h3, h4, .font-title { font-family: 'Doran', 'Vazirmatn Variable', 'Inter Variable', system-ui, sans-serif; }
+h3, h4 { font-weight: 500; }
+h1, h2, .font-title { font-weight: 700; }
+.prose :where(h1, h2, h3, h4) { font-family: 'Doran', 'Vazirmatn Variable', 'Inter Variable', system-ui, sans-serif; }

@@ -19,6 +19,7 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
     <link rel="alternate" hreflang="en" href={new URL(`/en/${path}`, Astro.site).href} />
     <link rel="alternate" hreflang="fa" href={new URL(`/fa/${path}`, Astro.site).href} />
     <meta property="og:title" content={full} /><meta property="og:description" content={desc} />
+    <link rel="preload" href="/fonts/doran-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
       try {

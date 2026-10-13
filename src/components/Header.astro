@@ -15,7 +15,7 @@ const nav = [
   <div class="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4">
     <a href={`/${lang}/`} class="flex items-center gap-2 font-bold tracking-tight">
       <span class="grid h-7 w-7 place-items-center rounded-lg text-sm text-white" style="background:var(--accent)">DE</span>
-      <span class="hidden sm:inline">{s.siteName}</span>
+      <span class="font-title hidden sm:inline">{s.siteName}</span>
     </a>
     <nav class="ms-4 hidden items-center gap-1 md:flex">
       {nav.map((n) => <a href={n.href} class="rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-[var(--bg-soft)]" style="color:var(--fg-muted)">{n.label}</a>)}
