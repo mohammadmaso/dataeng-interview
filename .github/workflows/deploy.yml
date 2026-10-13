@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
+      - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm run check:links
       - uses: actions/upload-pages-artifact@v3
