@@ -1,0 +1,16 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import { ta } from '../../../../i18n/app';
+import type { Lang } from '../../../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const a = ta(lang);
+---
+<Base lang={lang} title={a.gqTitle} description={a.gqSub} path="glossary/quiz/">
+  <main class="mx-auto max-w-2xl px-4 py-10">
+    <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl">{a.gqTitle}</h1>
+    <p class="mt-2 mb-6" style="color:var(--fg-muted)">{a.gqSub}</p>
+    <div id="gq-app" aria-live="polite"></div>
+  </main>
+  <script>import '../../../../scripts/glossary-quiz';</script>
+</Base>

@@ -1,0 +1,7 @@
+---
+// Invisible markers that become Pagefind filters (search by kind, track, level).
+const { kind, track, level } = Astro.props as { kind: string; track?: string; level?: string };
+---
+<div hidden data-pagefind-filter="kind[data-v]" data-v={kind}></div>
+{track && <div hidden data-pagefind-filter="track[data-v]" data-v={track}></div>}
+{level && <div hidden data-pagefind-filter="level[data-v]" data-v={level}></div>}

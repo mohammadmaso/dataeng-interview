@@ -1,11 +1,13 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import { t, faDigits, type Lang } from '../../../i18n/ui';
+import { ta } from '../../../i18n/app';
 import qIndex from '../../../data/question-index.json';
 
 export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
 const lang = Astro.params.lang as Lang;
 const s = t(lang);
+const a = ta(lang);
 const n = (x: number) => faDigits(x, lang);
 const total = (qIndex as any[]).reduce((a, c) => a + c.count, 0);
 const vols = [1, 2, 3, 4].map((v) => ({ v, items: (qIndex as any[]).filter((c) => c.vol === v) }));
@@ -20,13 +22,19 @@ const volTitle: Record<number, [string, string]> = {
   <main class="mx-auto max-w-5xl px-4 py-12">
     <h1 class="text-4xl font-extrabold tracking-tight">{s.qbTitle}</h1>
     <p class="mt-3 max-w-2xl text-lg" style="color:var(--fg-muted)">{s.qbSub} <strong>{n(total)}</strong> {s.qbCount}.</p>
+    <div class="mt-5 flex flex-wrap gap-2">
+      <a href={`/${lang}/review/`} class="rounded-xl px-4 py-2 text-sm font-semibold text-white" style="background:var(--accent)">🧠 {a.review}</a>
+      <a href={`/${lang}/mock/`} class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🎤 {a.mock}</a>
+      <button type="button" data-random="question" class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🎲 {a.qRandom}</button>
+    </div>
     {vols.map(({ v, items }) => (
       <section class="mt-10">
         <h2 class="mb-4 text-xl font-bold">{s.qbVolume} {n(v)} — {volTitle[v][lang === 'fa' ? 1 : 0]}</h2>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((c) => (
-            <a href={`/${lang}/questions/${c.slug}/`} class="card card-hover flex items-center justify-between p-4">
-              <span class="font-semibold">{c.title}</span><span class="chip">{n(c.count)}</span>
+            <a href={`/${lang}/questions/${c.slug}/`} class="card card-hover block p-4" data-qprog={`${c.slug}:${c.count}`}>
+              <span class="flex items-center justify-between gap-2"><span class="font-semibold">{c.title}</span><span class="chip">{n(c.count)}</span></span>
+              <span class="mt-3 flex items-center gap-2"><span class="h-1.5 flex-1 overflow-hidden rounded-full" style="background:var(--bg-soft)"><span data-bar class="block h-full" style="background:var(--accent);width:0"></span></span><span data-lbl class="text-[10px] tabular-nums" style="color:var(--fg-muted)"></span></span>
             </a>
           ))}
         </div>

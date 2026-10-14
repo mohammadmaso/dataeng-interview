@@ -1,0 +1,82 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getTopics } from '../../../lib/data';
+import { paths } from '../../../data/paths';
+import { ta } from '../../../i18n/app';
+import { faDigits, type Lang } from '../../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const a = ta(lang);
+const topics = await getTopics(lang);
+const byId = new Map(topics.map((x) => [x.data.tid, x]));
+// A typo in a path would silently drop a lesson, so fail the build instead.
+for (const p of paths) for (const id of p.tids) if (!byId.has(id)) throw new Error(`paths.ts: path "${p.id}" references unknown lesson "${id}"`);
+const n = (x: number | string) => faDigits(x, lang);
+const view = paths.map((p) => ({
+  ...p[lang], id: p.id, icon: p.icon,
+  steps: p.tids.map((id) => byId.get(id)!),
+  hours: p.tids.reduce((h, id) => h + byId.get(id)!.data.est_hours, 0),
+}));
+---
+<Base lang={lang} title={a.pathsTitle} description={a.pathsSub} path="paths/">
+  <main class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-4xl font-extrabold tracking-tight">{a.pathsTitle}</h1>
+    <p class="mt-3 max-w-2xl text-lg" style="color:var(--fg-muted)">{a.pathsSub}</p>
+    <div class="mt-8 grid gap-5">
+      {view.map((p) => (
+        <details class="card path-card p-5" id={p.id} data-path={p.steps.map((x) => x.data.tid).join(',')}>
+          <summary class="flex cursor-pointer list-none items-start gap-4">
+            <span class="text-3xl" aria-hidden="true">{p.icon}</span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-xl font-bold">{p.title}</span>
+              <span class="mt-1 block text-sm" style="color:var(--fg-muted)">{p.blurb}</span>
+              <span class="mt-3 flex items-center gap-3 text-xs" style="color:var(--fg-muted)">
+                <span>{n(p.steps.length)} {a.pathSteps} · ~{n(p.hours)} {a.pathHours}</span>
+                <span class="h-2 w-40 max-w-full overflow-hidden rounded-full" style="background:var(--bg-soft)"><span data-bar class="block h-full" style="background:var(--accent);width:0"></span></span>
+                <span data-lbl class="tabular-nums"></span>
+              </span>
+            </span>
+          </summary>
+          <ol class="mt-5 grid gap-1.5 border-t pt-4" style="border-color:var(--border)">
+            {p.steps.map((x, i) => (
+              <li>
+                <a href={`/${lang}/topics/${x.data.tid}/`} data-tid={x.data.tid} class="topic-row flex items-center gap-3 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--bg-soft)]">
+                  <span class="state-ring grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 text-[9px]" style="border-color:var(--border)"></span>
+                  <span class="w-5 text-xs font-bold" style="color:var(--accent)">{n(i + 1)}</span>
+                  <span class="min-w-0 flex-1 font-medium">{x.data.title}</span>
+                  <span class="text-xs" style="color:var(--fg-muted)">{n(x.data.est_hours)} {lang === 'fa' ? 'ساعت' : 'h'}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          <a data-start class="mt-4 inline-block rounded-xl px-5 py-2 text-sm font-semibold text-white" style="background:var(--accent)" href={`/${lang}/topics/${p.steps[0].data.tid}/`}>{a.pathStart} →</a>
+        </details>
+      ))}
+    </div>
+  </main>
+  <script>
+    import { getList, digits, ui } from '../../../scripts/store';
+    const a = ui().app;
+    function paint() {
+      const done = new Set([...getList('read'), ...getList('known')]);
+      document.querySelectorAll<HTMLElement>('[data-path]').forEach((el) => {
+        const ids = el.dataset.path!.split(','); const n = ids.filter((i) => done.has(i)).length;
+        (el.querySelector('[data-bar]') as HTMLElement).style.width = Math.round((n / ids.length) * 100) + '%';
+        (el.querySelector('[data-lbl]') as HTMLElement).textContent = n === ids.length ? '✓ ' + a.pathDone : `${digits(n)}/${digits(ids.length)}`;
+        const next = ids.find((i) => !done.has(i));
+        const btn = el.querySelector<HTMLAnchorElement>('[data-start]')!;
+        if (next) { btn.href = btn.href.replace(/topics\/[^/]+\/$/, `topics/${next}/`); btn.textContent = (n ? a.pathContinue : a.pathStart) + ' →'; }
+        else btn.style.display = 'none';
+      });
+    }
+    paint(); document.addEventListener('de:change', paint);
+    if (location.hash) (document.querySelector(location.hash) as HTMLDetailsElement | null)?.setAttribute('open', '');
+  </script>
+</Base>
+<style is:global>
+  .path-card[open] > summary { margin-bottom: 0; }
+  .topic-row[data-state='read'] .state-ring { background: var(--accent); border-color: var(--accent); }
+  .topic-row[data-state='read'] .state-ring::after { content: '✓'; color: #fff; }
+  .topic-row[data-state='known'] .state-ring { background: #6366f1; border-color: #6366f1; }
+  .topic-row[data-state='known'] .state-ring::after { content: '✓'; color: #fff; }
+</style>

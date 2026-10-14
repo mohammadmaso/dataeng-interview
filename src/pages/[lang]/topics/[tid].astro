@@ -5,7 +5,11 @@ import Sidebar from '../../../components/Sidebar.astro';
 import Badges from '../../../components/Badges.astro';
 import { getTopics, isStub, tracks, trackTitle } from '../../../lib/data';
 import { linkText } from '../../../lib/glossary.mjs';
+import PagefindMeta from '../../../components/PagefindMeta.astro';
 import { t, faDigits, type Lang } from '../../../i18n/ui';
+import { ta } from '../../../i18n/app';
+import { extractFlashcards } from '../../../lib/flashcards';
+import { updatedOf, editUrl, issueUrl } from '../../../lib/reviewed';
 import qIndex from '../../../data/question-index.json';
 
 export async function getStaticPaths() {
@@ -18,6 +22,7 @@ export async function getStaticPaths() {
 }
 const lang = Astro.params.lang as Lang;
 const s = t(lang);
+const a = ta(lang);
 const { entry, prev, next } = Astro.props;
 const d = entry.data;
 const all = await getTopics(lang);
@@ -29,6 +34,14 @@ const byId = new Map(all.map((x) => [x.data.tid, x]));
 const chapters = (qIndex as any[]).filter((c) => c.topics.includes(d.tid));
 const used = new Set<string>();
 const lt = (txt: string) => linkText(txt, lang, used);
+const hasCards = extractFlashcards(entry.body ?? '').length > 0;
+const words = (entry.body ?? '').split(/\s+/).length;
+const minutes = Math.max(1, Math.round(words / 200));
+const updated = updatedOf('topics', lang, d.tid);
+const pageUrl = new URL(`/${lang}/topics/${d.tid}/`, Astro.site).href;
+const fixUrl = issueUrl(`Fix: ${d.title} (${lang})`, `Page: ${pageUrl}\n\nWhat is wrong or unclear?\n\n`);
+const prereqs = d.prerequisites.filter((id) => byId.has(id));
+const nextUnread = next;
 const extraLabel: Record<string, string> = lang === 'fa'
   ? { practice: 'تمرین', problems: 'مسئله‌ها', patterns: 'الگوها', categories: 'دسته‌ها', candidates: 'نمونه‌ها', template: 'قالب' }
   : { practice: 'Practice', problems: 'Problems', patterns: 'Patterns', categories: 'Categories', candidates: 'Candidates', template: 'Template' };
@@ -36,7 +49,9 @@ const extraLabel: Record<string, string> = lang === 'fa'
 <Base lang={lang} title={d.title} description={d.summary} path={`topics/${d.tid}/`}>
   <div class="mx-auto flex max-w-7xl gap-8 px-4 py-8">
     <Sidebar lang={lang} topics={all} currentTrack={d.track} currentTid={d.tid} />
-    <main class="min-w-0 flex-1" data-pagefind-body>
+    <main class="min-w-0 flex-1" data-pagefind-body data-lesson={d.tid}>
+      <div id="read-bar" class="read-bar" aria-hidden="true"></div>
+      <PagefindMeta kind="lesson" track={d.track} level={d.level} />
       <nav class="mb-3 text-sm" style="color:var(--fg-muted)">
         <a href={`/${lang}/`} class="hover:underline">{s.home}</a> /
         <a href={`/${lang}/tracks/${tr.id}/`} class="hover:underline">{trackTitle(tr, lang)}</a>
@@ -46,10 +61,31 @@ const extraLabel: Record<string, string> = lang === 'fa'
       <div class="mt-3"><Badges lang={lang} level={d.level} priority={d.priority} type={d.type} hours={d.est_hours} /></div>
       <p class="mt-5 max-w-3xl text-lg leading-relaxed" set:html={lt(d.summary)} />
 
-      <div class="mt-5 flex flex-wrap gap-2" data-tid={d.tid}>
+      {prereqs.length > 0 && (
+        <div class="mt-4 flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-semibold" style="color:var(--fg-muted)">{a.beforeThis}:</span>
+          {prereqs.map((id) => <a href={`/${lang}/topics/${id}/`} data-tid={id} class="prereq chip hover:border-[var(--accent)]"><span class="state-tick"></span>{byId.get(id)!.data.title}</a>)}
+        </div>
+      )}
+
+      <div class="no-print mt-5 flex flex-wrap items-center gap-2" data-tid={d.tid}>
         <button data-toggle="read" data-id={d.tid} data-on={s.markedRead} data-off={s.markRead} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">{s.markRead}</button>
         <button data-toggle="known" data-id={d.tid} data-on={s.known} data-off={s.iKnow} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">{s.iKnow}</button>
+        <button type="button" data-bm={`t:${d.tid}`} data-on={`★ ${a.bookmarked}`} data-off={`☆ ${a.bookmark}`} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">☆ {a.bookmark}</button>
+        {hasCards && <a href={`/${lang}/review/?topic=${d.tid}`} class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🗂 {a.practiceThis}</a>}
+        <button type="button" data-print class="rounded-lg border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🖨 {a.print}</button>
       </div>
+      <p class="mt-3 text-xs" style="color:var(--fg-muted)">~{faDigits(minutes, lang)} {a.minRead}{updated ? ` · ${a.lastUpdated}: ${updated}` : ''} · <a class="underline" href={editUrl('topics', lang, d.tid)} rel="noopener">{a.editGithub}</a> · <a class="underline" href={fixUrl} rel="noopener">{a.suggestFix}</a></p>
+
+      {d.covers.length > 0 && !stub && (
+        <details class="no-print card mt-6 p-4" data-selfcheck={d.tid}>
+          <summary class="cursor-pointer font-semibold" style="color:var(--accent)">🧠 {d.type === 'problem' ? a.selfCheckDesign : a.selfCheck} <span class="chip ms-2" data-count></span></summary>
+          <p class="mt-2 text-sm" style="color:var(--fg-muted)">{a.selfCheckSub}</p>
+          <ul class="mt-3 grid gap-1.5">
+            {d.covers.map((c) => <li><label class="flex cursor-pointer gap-2 text-sm"><input type="checkbox" class="mt-0.5 h-4 w-4 accent-[var(--accent)]" /><span>{c}</span></label></li>)}
+          </ul>
+        </details>
+      )}
 
       {stub ? (
         <div class="mt-8 card p-5" style="background:var(--accent-soft)">
@@ -108,10 +144,14 @@ const extraLabel: Record<string, string> = lang === 'fa'
         </section>
       )}
 
-      <nav class="mt-12 grid gap-3 sm:grid-cols-2">
+      {nextUnread && (
+        <a href={`/${lang}/topics/${nextUnread.data.tid}/`} data-markread-next class="no-print mt-10 block rounded-xl px-5 py-3 text-center font-semibold text-white" style="background:var(--accent)">✓ {a.markReadNext} → {nextUnread.data.title}</a>
+      )}
+      <nav class="no-print mt-6 grid gap-3 sm:grid-cols-2">
         {prev ? <a href={`/${lang}/topics/${prev.data.tid}/`} class="card card-hover p-4"><div class="text-xs" style="color:var(--fg-muted)">← {s.prev}</div><div class="font-semibold">{prev.data.title}</div></a> : <span />}
         {next ? <a href={`/${lang}/topics/${next.data.tid}/`} class="card card-hover p-4 sm:text-end"><div class="text-xs" style="color:var(--fg-muted)">{s.next} →</div><div class="font-semibold">{next.data.title}</div></a> : <span />}
       </nav>
     </main>
   </div>
+  <script>import '../../../scripts/lesson';</script>
 </Base>

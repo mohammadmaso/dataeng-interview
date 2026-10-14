@@ -20,6 +20,7 @@
     "astro": "^7.3.8",
     "mermaid": "^11.17.2",
     "pagefind": "^1.5.2",
+    "sql.js": "^1.14.2",
     "tailwindcss": "^4.3.3",
     "unist-util-visit": "^5.1.0"
   }

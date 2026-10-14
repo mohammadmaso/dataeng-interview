@@ -1,12 +1,16 @@
 ---
 import { t, languages, type Lang } from '../i18n/ui';
+import { ta } from '../i18n/app';
 const { lang, path } = Astro.props as { lang: Lang; path: string }; // path = url without lang prefix e.g. "topics/x/"
 const s = t(lang);
+const a = ta(lang);
 const other: Lang = lang === 'en' ? 'fa' : 'en';
 const nav = [
   { href: `/${lang}/`, label: s.learn },
   { href: `/${lang}/questions/`, label: s.questions },
+  { href: `/${lang}/practice/`, label: a.practice },
   { href: `/${lang}/glossary/`, label: s.glossary },
+  { href: `/${lang}/paths/`, label: a.paths },
   { href: `/${lang}/study-plan/`, label: s.plan },
   { href: `/${lang}/resources/`, label: s.resources },
 ];
@@ -21,9 +25,11 @@ const nav = [
       {nav.map((n) => <a href={n.href} class="rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-[var(--bg-soft)]" style="color:var(--fg-muted)">{n.label}</a>)}
     </nav>
     <div class="ms-auto flex items-center gap-2">
+      <a id="hdr-streak" href={`/${lang}/progress/`} class="hidden rounded-lg border px-2 py-1 text-sm font-bold tabular-nums" style="border-color:var(--border)"></a>
+      <a href={`/${lang}/review/`} class="relative hidden rounded-lg border px-2.5 py-1.5 text-sm font-semibold sm:inline-block" style="border-color:var(--border)" aria-label={a.review}>{a.review}<span id="hdr-due" class="absolute -top-2 -end-2 h-5 min-w-5 place-items-center rounded-full px-1 text-[10px] font-bold text-white" style="background:#dc2626;display:none"></span></a>
       <button id="open-search" class="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm" style="border-color:var(--border);color:var(--fg-muted);background:var(--bg-soft)" aria-label={s.search}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <span class="hidden sm:inline">{s.search}</span><kbd class="hidden rounded border px-1 text-[10px] sm:inline" style="border-color:var(--border)">/</kbd>
+        <span class="hidden sm:inline">{s.search}</span><kbd class="hidden rounded border px-1 text-[10px] sm:inline" style="border-color:var(--border)" dir="ltr">Ctrl K</kbd>
       </button>
       <a href={`/${other}/${path}`} hreflang={other} class="rounded-lg border px-2.5 py-1.5 text-sm font-semibold" style="border-color:var(--border)" data-lang-switch={other}>{languages[other]}</a>
       <button id="theme-toggle" class="grid h-8 w-8 place-items-center rounded-lg border" style="border-color:var(--border)" aria-label={s.theme}>

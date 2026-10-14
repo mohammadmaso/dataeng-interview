@@ -1,0 +1,56 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getTopics, tracks, trackTitle } from '../../../lib/data';
+import { extractFlashcards } from '../../../lib/flashcards';
+import { linkText } from '../../../lib/glossary.mjs';
+import { ta } from '../../../i18n/app';
+import { t, faDigits, type Lang } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return ['en', 'fa'].flatMap((lang) => tracks.map((tr) => ({ params: { lang, track: tr.id } })));
+}
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const a = ta(lang);
+const tr = tracks.find((x) => x.id === Astro.params.track)!;
+const list = (await getTopics(lang)).filter((x) => x.data.track === tr.id);
+const n = (x: number | string) => faDigits(x, lang);
+const sheets = list.map((x) => ({ d: x.data, cards: extractFlashcards(x.body ?? '') }));
+const title = `${a.cheatsheets}: ${trackTitle(tr, lang)}`;
+---
+<Base lang={lang} title={title} description={a.csSub} path={`cheatsheets/${tr.id}/`}>
+  <main class="cheatsheet mx-auto max-w-4xl px-4 py-10">
+    <nav class="no-print mb-3 text-sm" style="color:var(--fg-muted)"><a class="hover:underline" href={`/${lang}/cheatsheets/`}>{a.cheatsheets}</a> / {trackTitle(tr, lang)}</nav>
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl">{trackTitle(tr, lang)}</h1>
+      <button type="button" data-print class="no-print rounded-xl px-4 py-2 text-sm font-semibold text-white" style="background:var(--accent)">🖨 {a.csPrint}</button>
+    </div>
+    <p class="no-print mt-2" style="color:var(--fg-muted)">{n(list.length)} {s.topics}. {a.csSub}</p>
+
+    {sheets.map(({ d, cards }) => (
+      <section class="cs-topic mt-8 break-inside-avoid border-t pt-5" style="border-color:var(--border)">
+        <h2 class="text-xl font-bold"><a href={`/${lang}/topics/${d.tid}/`}>{n(d.num)} · {d.title}</a></h2>
+        <p class="mt-1 text-sm" style="color:var(--fg-muted)" set:html={linkText(d.summary, lang)} />
+        {d.covers.length > 0 && (
+          <div class="mt-2 text-sm"><strong>{a.csKey}:</strong> {d.covers.join(' · ')}</div>
+        )}
+        {d.interview_qs.length > 0 && (
+          <div class="mt-2 text-sm"><strong>{a.csQs}:</strong>
+            <ul class="mt-1 list-disc ps-5">{d.interview_qs.map((q) => <li>{q}</li>)}</ul></div>
+        )}
+        {cards.length > 0 && (
+          <table class="cs-table mt-3 w-full text-sm">
+            <thead><tr><th class="text-start">{a.csFlash}</th><th></th></tr></thead>
+            <tbody>{cards.map((c) => <tr><td class="align-top font-semibold" set:html={c.front} /><td class="align-top" set:html={c.back} /></tr>)}</tbody>
+          </table>
+        )}
+      </section>
+    ))}
+  </main>
+</Base>
+<style is:global>
+  .cs-table { border-collapse: collapse; }
+  .cs-table td, .cs-table th { border: 1px solid var(--border); padding: .35rem .6rem; }
+  .cs-table th { background: var(--bg-soft); }
+  .cs-table code { background: var(--bg-soft); border: 1px solid var(--border); border-radius: .3rem; padding: 0 .25rem; font-size: .85em; }
+</style>

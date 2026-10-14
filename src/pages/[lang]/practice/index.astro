@@ -1,0 +1,38 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { ta } from '../../../i18n/app';
+import type { Lang } from '../../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const a = ta(lang);
+const cards = [
+  { href: 'review/', icon: '🧠', t: a.hubReview, d: a.hubReviewSub, badge: true },
+  { href: 'mock/', icon: '🎤', t: a.hubMock, d: a.hubMockSub },
+  { href: 'drill/', icon: '📐', t: a.hubDrill, d: a.hubDrillSub },
+  { href: 'playground/', icon: '🧮', t: a.hubPlayground, d: a.hubPlaygroundSub },
+  { href: 'glossary/quiz/', icon: '🔤', t: a.hubGlossary, d: a.hubGlossarySub },
+  { href: 'paths/', icon: '🗺️', t: a.hubPaths, d: a.hubPathsSub },
+  { href: 'bookmarks/', icon: '★', t: a.hubBookmarks, d: a.hubBookmarksSub },
+  { href: 'progress/', icon: '📈', t: a.hubProgress, d: a.hubProgressSub },
+];
+---
+<Base lang={lang} title={a.practiceTitle} description={a.practiceSub} path="practice/">
+  <main class="mx-auto max-w-5xl px-4 py-12">
+    <h1 class="text-4xl font-extrabold tracking-tight">{a.practiceTitle}</h1>
+    <p class="mt-3 max-w-2xl text-lg" style="color:var(--fg-muted)">{a.practiceSub}</p>
+    <div id="home-dash" class="card mt-6 hidden p-5"></div>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      {cards.map((c) => (
+        <a href={`/${lang}/${c.href}`} class="card card-hover flex gap-4 p-5">
+          <span class="text-3xl" aria-hidden="true">{c.icon}</span>
+          <span><span class="block text-lg font-bold">{c.t}</span><span class="mt-1 block text-sm" style="color:var(--fg-muted)">{c.d}</span></span>
+        </a>
+      ))}
+    </div>
+    <div class="mt-6 flex flex-wrap gap-2">
+      <button type="button" data-random="question" class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🎲 {a.randomQuestion}</button>
+      <button type="button" data-random="term" class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🎲 {a.randomTerm}</button>
+      <a href={`/${lang}/cheatsheets/`} class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">📄 {a.cheatsheets}</a>
+    </div>
+  </main>
+</Base>

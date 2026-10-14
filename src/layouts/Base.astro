@@ -2,8 +2,11 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import { t, dirOf, type Lang } from '../i18n/ui';
+import { ta } from '../i18n/app';
 const { lang, title, description, path = '' } = Astro.props as { lang: Lang; title?: string; description?: string; path?: string };
 const s = t(lang);
+const a = ta(lang);
+const uiJson = JSON.stringify({ ...s, app: a });
 const full = title ? `${title} · ${s.siteName}` : `${s.siteName} — ${s.tagline}`;
 const desc = description ?? s.heroSub;
 const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
@@ -21,6 +24,8 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
     <meta property="og:title" content={full} /><meta property="og:description" content={desc} />
     <link rel="preload" href="/fonts/doran-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href={`/${lang}/manifest.webmanifest`} />
+    <meta name="theme-color" content="#059669" />
     <script is:inline>
       try {
         var th = localStorage.getItem('de:theme');
@@ -32,7 +37,15 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
   <body class="min-h-screen antialiased">
     <Header lang={lang} path={path} />
     <slot />
+    <script type="application/json" id="ui-json" set:html={uiJson} />
     <footer class="mt-24 border-t py-10 text-center text-sm" style="border-color:var(--border);color:var(--fg-muted)">
+      <nav class="mb-3 flex flex-wrap justify-center gap-x-5 gap-y-1">
+        <a class="hover:underline" href={`/${lang}/practice/`}>{a.practice}</a>
+        <a class="hover:underline" href={`/${lang}/progress/`}>{a.progress}</a>
+        <a class="hover:underline" href={`/${lang}/paths/`}>{a.paths}</a>
+        <a class="hover:underline" href={`/${lang}/cheatsheets/`}>{a.cheatsheets}</a>
+        <a class="hover:underline" href={`/${lang}/playground/`}>{a.playground}</a>
+      </nav>
       {s.footer} · <a class="underline" href="https://github.com/mohammadmaso/dataeng-interview">GitHub</a>
     </footer>
 
@@ -45,6 +58,14 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
         var K = { read: 'de:read', known: 'de:known' };
         var load = function (k) { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) { return []; } };
         var save = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+        function bumpAct() {
+          try {
+            var d = new Date(), day = String(Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000));
+            var act = JSON.parse(localStorage.getItem('de:act') || '{}'); act[day] = (act[day] || 0) + 1;
+            localStorage.setItem('de:act', JSON.stringify(act));
+          } catch (e) {}
+          document.dispatchEvent(new CustomEvent('de:change', { detail: { key: 'de:act' } }));
+        }
         function paint() {
           var read = load(K.read), known = load(K.known);
           document.querySelectorAll('[data-tid]').forEach(function (el) {
@@ -76,7 +97,7 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
           var b = e.target.closest && e.target.closest('[data-toggle]');
           if (!b) return;
           var key = K[b.getAttribute('data-toggle')], id = b.getAttribute('data-id'), arr = load(key), i = arr.indexOf(id);
-          if (i > -1) arr.splice(i, 1); else arr.push(id);
+          if (i > -1) arr.splice(i, 1); else { arr.push(id); bumpAct(); }
           save(key, arr); paint();
         });
         var tt = document.getElementById('theme-toggle');
@@ -182,6 +203,7 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
         addEventListener('scroll', function () { card.classList.remove('show'); current = null; }, { passive: true });
       })();
     </script>
+    <script>import '../scripts/global';</script>
     <script>
       const blocks = document.querySelectorAll<HTMLElement>('pre[data-language="mermaid"]');
       if (blocks.length) {

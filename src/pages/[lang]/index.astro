@@ -3,10 +3,12 @@ import Base from '../../layouts/Base.astro';
 import Badges from '../../components/Badges.astro';
 import { getTopics, getTerms, tracks, trackTitle, trackIntro, groups, groupTitle } from '../../lib/data';
 import { t, faDigits, type Lang } from '../../i18n/ui';
+import { ta } from '../../i18n/app';
 
 export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
 const lang = Astro.params.lang as Lang;
 const s = t(lang);
+const a = ta(lang);
 const topics = await getTopics(lang);
 const terms = await getTerms(lang);
 const n = (x: number) => faDigits(x, lang);
@@ -21,8 +23,10 @@ const hurry = topics.filter((x) => x.data.track === '0');
       <p class="mx-auto mt-6 max-w-2xl text-lg" style="color:var(--fg-muted)">{s.heroSub}</p>
       <div class="mt-9 flex flex-wrap justify-center gap-3">
         <a href={`/${lang}/topics/de-role-overview/`} class="rounded-xl px-6 py-3 font-semibold text-white shadow-lg" style="background:var(--accent)">{s.startLearning}</a>
+        <a href={`/${lang}/practice/`} class="rounded-xl border px-6 py-3 font-semibold" style="border-color:var(--border);background:var(--bg-card)">{a.practice}</a>
         <a href={`/${lang}/glossary/`} class="rounded-xl border px-6 py-3 font-semibold" style="border-color:var(--border);background:var(--bg-card)">{s.openGlossary}</a>
       </div>
+      <div id="home-dash" class="card mx-auto mt-8 hidden max-w-3xl p-5 text-start"></div>
       <dl class="mx-auto mt-14 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
         {[[tracks.length, s.stats.tracks], [topics.filter((x) => x.data.type !== 'problem').length, s.stats.topics], [topics.filter((x) => x.data.type === 'problem').length, s.stats.problems], [terms.length, s.stats.terms]].map(([v, l]) => (
           <div><dd class="text-3xl font-bold" style="color:var(--accent)">{n(v as number)}</dd><dt class="text-xs" style="color:var(--fg-muted)">{l}</dt></div>

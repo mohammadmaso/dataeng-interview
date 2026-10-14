@@ -1,0 +1,40 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { ta } from '../../../i18n/app';
+import { EXAMPLES } from '../../../data/sample-db';
+import type { Lang } from '../../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const a = ta(lang);
+const examples = EXAMPLES.map((e) => ({ id: e.id, title: e.title[lang], sql: e.sql }));
+---
+<Base lang={lang} title={a.pgTitle} description={a.pgSub} path="playground/">
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl">{a.pgTitle}</h1>
+    <p class="mt-2" style="color:var(--fg-muted)">{a.pgSub}</p>
+    <p class="mt-1 text-sm" style="color:var(--fg-muted)">{a.pgDialect}</p>
+
+    <div class="mt-6 grid gap-5 lg:grid-cols-[16rem_1fr]">
+      <aside>
+        <h2 class="mb-2 text-sm font-bold uppercase" style="color:var(--fg-muted)">{a.pgSchema}</h2>
+        <div id="pg-schema" class="grid gap-2 text-sm" dir="ltr"><span style="color:var(--fg-muted)">{a.pgLoading}</span></div>
+      </aside>
+      <section class="min-w-0">
+        <div class="flex flex-wrap gap-1.5" id="pg-examples" aria-label={a.pgExamples}>
+          {examples.map((e) => <button type="button" class="chip hover:border-[var(--accent)]" data-ex={e.id}>{e.title}</button>)}
+        </div>
+        <textarea id="pg-editor" spellcheck="false" rows="10" dir="ltr" class="mt-3 w-full rounded-xl border p-3 font-mono text-sm leading-relaxed" style="border-color:var(--border);background:var(--bg-soft);color:var(--fg);tab-size:2" aria-label="SQL"></textarea>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <button id="pg-run" class="rounded-xl px-5 py-2 font-semibold text-white" style="background:var(--accent)">{a.pgRun} ▶</button>
+          <button id="pg-reset" class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">{a.pgReset}</button>
+          <button id="pg-link" class="rounded-xl border px-4 py-2 text-sm font-semibold" style="border-color:var(--border)">🔗 {a.pgCopyLink}</button>
+          <span class="text-xs" style="color:var(--fg-muted)">{a.pgHint}</span>
+          <span id="pg-status" class="text-xs font-semibold" style="color:var(--accent)"></span>
+        </div>
+        <div id="pg-out" class="mt-4" aria-live="polite"></div>
+      </section>
+    </div>
+    <script type="application/json" id="pg-data" set:html={JSON.stringify(examples)} />
+  </main>
+  <script>import '../../../scripts/playground';</script>
+</Base>
