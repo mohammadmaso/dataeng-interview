@@ -67,16 +67,21 @@ html[lang='fa'] body { font-family: 'Vazirmatn Variable', 'Inter Variable', syst
 /* glossary links with hover tooltip */
 a.gloss { color: inherit; text-decoration: underline dotted var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; position: relative; cursor: help; }
 a.gloss:hover, a.gloss:focus-visible { color: var(--accent); }
-a.gloss::after {
-  content: attr(data-tip); position: absolute; z-index: 40; inset-inline-start: 50%; bottom: calc(100% + 8px);
-  width: max-content; max-width: min(320px, 80vw); padding: .5rem .7rem; border-radius: .6rem; font-size: .8rem; line-height: 1.45; font-weight: 400;
-  background: var(--tip-bg); color: var(--tip-fg); box-shadow: 0 8px 30px rgb(0 0 0 / .25);
-  opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(4px); transition: opacity .12s, transform .12s; white-space: normal; text-align: start;
-}
-[dir='rtl'] a.gloss::after { transform: translateX(50%) translateY(4px); }
-a.gloss:hover::after, a.gloss:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
-[dir='rtl'] a.gloss:hover::after, [dir='rtl'] a.gloss:focus-visible::after { transform: translateX(50%) translateY(0); }
-a.gloss[data-tip='']::after { display: none; }
+
+/* hover preview card */
+#preview-card { position: fixed; z-index: 60; width: min(420px, 92vw); max-height: 320px; overflow: hidden; border: 1px solid var(--border); border-radius: .9rem;
+  background: var(--bg); color: var(--fg); box-shadow: 0 12px 40px rgb(0 0 0 / .25); font-size: .875rem; line-height: 1.55; padding: .9rem 1rem;
+  opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .12s, transform .12s, visibility .12s; }
+#preview-card.show { opacity: 1; visibility: visible; transform: none; }
+#preview-card::after { content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 2.5rem; background: linear-gradient(transparent, var(--bg)); pointer-events: none; }
+#preview-card h1, #preview-card h2, #preview-card h3 { font-size: 1rem; font-weight: 700; margin: .6rem 0 .25rem; }
+#preview-card h1 { font-size: 1.1rem; margin-top: 0; }
+#preview-card p, #preview-card ul, #preview-card ol { margin: .35rem 0; }
+#preview-card ul { list-style: disc; padding-inline-start: 1.2rem; }
+#preview-card ol { list-style: decimal; padding-inline-start: 1.2rem; }
+#preview-card pre, #preview-card table, #preview-card svg, #preview-card img { display: none; }
+#preview-card .pv-kind { color: var(--fg-muted); font-size: .75rem; margin-bottom: .2rem; }
+@media (hover: none) { #preview-card { display: none; } }
 
 /* prose tuning */
 .prose { --tw-prose-body: var(--fg); --tw-prose-headings: var(--fg); --tw-prose-links: var(--accent); --tw-prose-bold: var(--fg); --tw-prose-code: var(--fg); --tw-prose-quotes: var(--fg); --tw-prose-bullets: var(--fg-muted); --tw-prose-counters: var(--fg-muted); --tw-prose-hr: var(--border); --tw-prose-th-borders: var(--border); --tw-prose-td-borders: var(--border); --tw-prose-pre-bg: var(--bg-soft); --tw-prose-pre-code: var(--fg); max-width: none; }

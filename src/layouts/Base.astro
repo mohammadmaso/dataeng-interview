@@ -108,6 +108,80 @@ const canonical = new URL(`/${lang}/${path}`, Astro.site).href;
         document.addEventListener('DOMContentLoaded', paint); if (document.readyState !== 'loading') paint();
       })();
     </script>
+    <script is:inline>
+      // hover preview cards for internal links, so readers can peek without leaving the page
+      (function () {
+        if (!matchMedia('(hover: hover)').matches) return;
+        var card = document.createElement('div');
+        card.id = 'preview-card'; card.setAttribute('role', 'tooltip');
+        document.body.appendChild(card);
+        var cache = {}, timer, hideTimer, current;
+        function eligible(a) {
+          if (!a || !a.getAttribute) return false;
+          var h = a.getAttribute('href') || '';
+          if (!/^\/(en|fa)\//.test(h)) return false;
+          if (a.closest('header, nav, footer, aside, #preview-card') ) return false;
+          if (a.hasAttribute('data-no-preview') || a.target === '_blank') return false;
+          return new URL(a.href).pathname !== location.pathname;
+        }
+        function load(url) {
+          if (cache[url]) return cache[url];
+          return cache[url] = fetch(url).then(function (r) { return r.ok ? r.text() : Promise.reject(); }).then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var main = doc.querySelector('main'); if (!main) return null;
+            var box = document.createElement('div');
+            var h1 = main.querySelector('h1');
+            if (h1) { var t = document.createElement('h1'); t.textContent = h1.textContent; box.appendChild(t); }
+            var body = main.querySelector('article') || main;
+            var lead = main.querySelector('h1 + p, h1 ~ p'); 
+            if (lead && !body.contains(lead)) { var p = document.createElement('p'); p.textContent = lead.textContent; p.style.color = 'var(--fg-muted)'; box.appendChild(p); }
+            var c = body.cloneNode(true);
+            c.querySelectorAll('script, style, button, nav, pre, table, svg, img, [data-toggle], .chip').forEach(function (n) { n.remove(); });
+            c.querySelectorAll('a').forEach(function (n) { n.removeAttribute('href'); });
+            c.querySelectorAll('[class]').forEach(function (n) { n.removeAttribute('class'); });
+            c.querySelectorAll('[style]').forEach(function (n) { n.removeAttribute('style'); });
+            c.removeAttribute('class');
+            if (c === body.parentNode) return null;
+            box.appendChild(c);
+            return { html: box.innerHTML, dir: doc.documentElement.dir || 'ltr' };
+          }).catch(function () { delete cache[url]; return null; });
+        }
+        function place(a) {
+          var r = a.getBoundingClientRect(), w = card.offsetWidth, h = card.offsetHeight, m = 8;
+          var left = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), innerWidth - w - m);
+          var top = r.bottom + m;
+          if (top + h > innerHeight - m && r.top - h - m > m) top = r.top - h - m;
+          card.style.left = left + 'px'; card.style.top = Math.max(m, top) + 'px';
+        }
+        function show(a) {
+          current = a; clearTimeout(hideTimer);
+          var tip = a.getAttribute('data-tip');
+          card.dir = document.documentElement.dir;
+          card.innerHTML = tip ? '<p>' + tip.replace(/</g, '&lt;') + '</p>' : '<p style="color:var(--fg-muted)">…</p>';
+          place(a); card.classList.add('show');
+          load(a.href).then(function (res) {
+            if (current !== a || !res) return;
+            card.dir = res.dir; card.innerHTML = res.html; place(a);
+          });
+        }
+        function hide() { clearTimeout(timer); hideTimer = setTimeout(function () { card.classList.remove('show'); current = null; }, 120); }
+        document.addEventListener('mouseover', function (e) {
+          var a = e.target.closest && e.target.closest('a');
+          if (card.contains(e.target)) { clearTimeout(hideTimer); return; }
+          if (!eligible(a)) return;
+          if (a === current) { clearTimeout(hideTimer); return; }
+          clearTimeout(timer); timer = setTimeout(function () { show(a); }, 250);
+        });
+        document.addEventListener('mouseout', function (e) {
+          var a = e.target.closest && e.target.closest('a');
+          if (a === current || a && eligible(a) || card.contains(e.target)) hide();
+        });
+        document.addEventListener('focusin', function (e) { var a = e.target.closest && e.target.closest('a'); if (eligible(a)) show(a); });
+        document.addEventListener('focusout', hide);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { card.classList.remove('show'); current = null; } });
+        addEventListener('scroll', function () { card.classList.remove('show'); current = null; }, { passive: true });
+      })();
+    </script>
     <script>
       const blocks = document.querySelectorAll<HTMLElement>('pre[data-language="mermaid"]');
       if (blocks.length) {
