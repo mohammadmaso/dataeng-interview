@@ -6,17 +6,49 @@ export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params:
 const lang = Astro.params.lang as Lang;
 const s = t(lang);
 const fa = lang === 'fa';
+const i = fa ? 1 : 0;
+const cover = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
+const sections = [
+  { title: fa ? 'تمرین' : 'Practice', items: r.practice },
+  { title: fa ? 'مستندات' : 'Docs to skim', items: r.docs },
+  { title: fa ? 'مقالات و مقاله‌های علمی' : 'Articles & papers', items: r.articles },
+];
 ---
 <Base lang={lang} title={s.resourcesTitle} path="resources/">
-  <main class="mx-auto max-w-4xl px-4 py-12">
+  <main class="mx-auto max-w-5xl px-4 py-12">
     <h1 class="text-4xl font-extrabold tracking-tight">{s.resourcesTitle}</h1>
+    <p class="mt-2" style="color:var(--fg-muted)">{fa ? 'P0 = حتماً بخوانید، P1 = مهم، P2 = تکمیلی. کلیک روی هر کتاب صفحه‌ی آن را در Open Library باز می‌کند.' : 'P0 = must read, P1 = important, P2 = supplementary. Click a book to open its Open Library page.'}</p>
     <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'کتاب‌ها' : 'Books'}</h2>
-    <ul class="grid gap-2">
-      {r.books.map((b) => <li class="card flex flex-wrap items-center justify-between gap-2 p-4"><span><strong>{b[0]}</strong>{b[1] && <span style="color:var(--fg-muted)"> — {b[1]}</span>}</span><span class="inline-flex gap-2"><span class={`chip chip-${b[2]}`}>{b[2]}</span><span class="chip">{fa ? b[4] : b[3]}</span></span></li>)}
+    <ul class="grid gap-3 sm:grid-cols-2">
+      {r.books.map((b) => (
+        <li>
+          <a href={`https://openlibrary.org/isbn/${b.isbn}`} target="_blank" rel="noopener noreferrer" class="card flex h-full gap-4 p-4 no-underline">
+            <div class="book-cover" aria-hidden="true">
+              <img src={cover(b.isbn)} alt={`${b.title} cover`} loading="lazy" width="90" height="130" onerror="this.style.display='none'" />
+              <span class="book-fallback">{b.title}</span>
+            </div>
+            <div class="min-w-0">
+              <strong class="block leading-snug">{b.title}</strong>
+              <span class="block text-sm" style="color:var(--fg-muted)">{b.author}</span>
+              <span class="mt-1 inline-flex gap-2"><span class={`chip chip-${b.pri}`}>{b.pri}</span><span class="chip">{b.topic[i]}</span></span>
+              <p class="mt-2 text-sm" style="color:var(--fg-muted)">{b.why[i]}</p>
+            </div>
+          </a>
+        </li>
+      ))}
     </ul>
-    <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'تمرین' : 'Practice'}</h2>
-    <ul class="grid gap-2">{r.practice.map((p) => <li class="card p-4"><strong>{fa ? p[2] : p[0]}</strong> — <span style="color:var(--fg-muted)">{fa ? p[3] : p[1]}</span></li>)}</ul>
-    <h2 class="mb-3 mt-10 text-xl font-bold">{fa ? 'مستندات' : 'Docs to skim'}</h2>
-    <p style="color:var(--fg-muted)">{fa ? r.docs_fa : r.docs}</p>
+    {sections.map((sec) => (
+      <>
+        <h2 class="mb-3 mt-10 text-xl font-bold">{sec.title}</h2>
+        <ul class="grid gap-2 sm:grid-cols-2">
+          {sec.items.map((l) => <li><a href={l.url} target="_blank" rel="noopener noreferrer" class="card block p-4 no-underline"><strong>{l.name} ↗</strong><span class="block text-sm" style="color:var(--fg-muted)">{l.note[i]}</span></a></li>)}
+        </ul>
+      </>
+    ))}
   </main>
 </Base>
+<style>
+  .book-cover { position: relative; flex: none; width: 90px; height: 130px; border-radius: 6px; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--border); }
+  .book-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+  .book-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: .4rem; text-align: center; font-size: .7rem; font-weight: 700; color: var(--fg-muted); }
+</style>
