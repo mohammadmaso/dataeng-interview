@@ -1,0 +1,168 @@
+---
+import Base from '../../layouts/Base.astro';
+import * as m from '../../data/market';
+import { t, faDigits, type Lang } from '../../i18n/ui';
+export function getStaticPaths() { return [{ params: { lang: 'en' } }, { params: { lang: 'fa' } }]; }
+const lang = Astro.params.lang as Lang;
+const s = t(lang);
+const fa = lang === 'fa';
+const i = fa ? 1 : 0;
+const d = (x: string | number) => faDigits(x, lang);
+const maxN = Math.max(...m.techCount.map((x) => x.n));
+const H = (en: string, faT: string) => (fa ? faT : en);
+const toc = [
+  ['caveats', H('How to read this', 'نحوه‌ی خواندن')],
+  ['findings', H('Key findings', 'یافته‌های کلیدی')],
+  ['salary', H('Salary', 'حقوق')],
+  ['stack', H('Technologies', 'تکنولوژی‌ها')],
+  ['learn', H('What to learn', 'چه چیزی یاد بگیریم')],
+  ['companies', H('Companies', 'شرکت‌ها')],
+  ['perks', H('Benefits', 'مزایا')],
+  ['rules', H('Hiring rules', 'شرایط استخدام')],
+  ['actions', H('Action plan', 'برنامه‌ی عمل')],
+  ['sources', H('Sources', 'منابع')],
+];
+---
+<Base lang={lang} title={m.title[i]} description={m.intro[i]} path="market/">
+  <main class="mx-auto max-w-5xl px-4 py-12">
+    <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">{m.title[i]}</h1>
+    <p class="mt-3 max-w-3xl" style="color:var(--fg-muted)">{m.intro[i]}</p>
+    <p class="mt-2 text-sm" style="color:var(--fg-muted)">{H('Data collected', 'تاریخ جمع‌آوری')}: {fa ? m.meta.collectedFa : m.meta.collected} · {d(m.meta.postingsRead)} {H('postings read in full', 'آگهی کامل خوانده شد')}</p>
+
+    <nav class="mt-6 flex flex-wrap gap-2" aria-label={s.onThisPage}>
+      {toc.map(([id, label]) => <a href={`#${id}`} class="chip no-underline">{label}</a>)}
+    </nav>
+
+    <section id="caveats" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[0][1]}</h2>
+      <ul class="card space-y-2 p-4 ps-8 text-sm" style="list-style:disc">
+        {m.caveats.map((c) => <li>{c[i]}</li>)}
+      </ul>
+    </section>
+
+    <section id="findings" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[1][1]}</h2>
+      <ol class="grid gap-3 sm:grid-cols-2">
+        {m.findings.map((f, k) => (
+          <li class="card p-4"><span class="chip chip-P0 mb-2">{d(k + 1)}</span><p class="text-sm">{f[i]}</p></li>
+        ))}
+      </ol>
+    </section>
+
+    <section id="salary" class="mt-10">
+      <h2 class="mb-1 text-xl font-bold">{toc[2][1]}</h2>
+      <p class="mb-3 text-sm" style="color:var(--fg-muted)">{m.salaryNote[i]}</p>
+      <h3 class="mb-2 mt-4 font-bold">{H('Our estimate (Tehran, monthly, million toman)', 'برآورد ما (تهران، ماهانه، میلیون تومان)')}</h3>
+      <div class="grid gap-3 sm:grid-cols-3">
+        {m.salaryEstimate.map((r) => (
+          <div class="card p-4">
+            <div class="flex items-center justify-between"><strong>{r.level[i]}</strong><span class="chip">{r.years[i]}</span></div>
+            <div class="my-2 text-3xl font-extrabold tabular-nums" style="color:var(--accent)" dir="ltr">{d(r.range[i])}</div>
+            <p class="text-sm" style="color:var(--fg-muted)">{r.note[i]}</p>
+          </div>
+        ))}
+      </div>
+      <h3 class="mb-2 mt-8 font-bold">{H('Evidence by source', 'شواهد به تفکیک منبع')}</h3>
+      <div class="card overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-start" style="color:var(--fg-muted)">
+            <th class="p-3 text-start">{H('Source', 'منبع')}</th><th class="p-3 text-start">{H('Scope', 'دامنه')}</th><th class="p-3 text-start">{H('Value', 'مقدار')}</th><th class="p-3 text-start">{H('Reliability', 'اعتبار')}</th>
+          </tr></thead>
+          <tbody>
+            {m.salarySources.map((r) => (
+              <tr class="border-t" style="border-color:var(--border)">
+                <td class="p-3">{r.source[i]}</td><td class="p-3">{r.scope[i]}</td><td class="whitespace-nowrap p-3 font-bold tabular-nums" dir="ltr">{r.value[i]}</td><td class="p-3" style="color:var(--fg-muted)">{r.kind[i]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul class="mt-4 space-y-2 text-sm" style="list-style:disc;padding-inline-start:1.25rem">
+        {m.salaryTips.map((x) => <li>{x[i]}</li>)}
+      </ul>
+    </section>
+
+    <section id="stack" class="mt-10">
+      <h2 class="mb-1 text-xl font-bold">{toc[3][1]}</h2>
+      <p class="mb-3 text-sm" style="color:var(--fg-muted)">{H(`How many of the ${m.meta.postingsRead} postings mention each technology.`, `هر تکنولوژی در چند آگهی از ${d(m.meta.postingsRead)} آگهی آمده است.`)}</p>
+      <ul class="card divide-y p-2" style="--tw-divide-color:var(--border)">
+        {m.techCount.map((x) => (
+          <li class="grid items-center gap-x-3 gap-y-1 p-3 sm:grid-cols-[14rem_1fr]">
+            <div><strong>{x.name}</strong> <span class="chip ms-1">{x.group[i]}</span></div>
+            <div>
+              <div class="flex items-center gap-2">
+                <div class="h-2 flex-1 overflow-hidden rounded-full" style="background:var(--bg-soft)" dir="ltr"><div class="h-full rounded-full" style={`width:${(x.n / maxN) * 100}%;background:var(--accent)`}></div></div>
+                <span class="w-12 text-end text-sm font-bold tabular-nums">{d(x.n)}/{d(m.meta.postingsRead)}</span>
+              </div>
+              <p class="mt-1 text-xs" style="color:var(--fg-muted)">{x.note[i]}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="learn" class="mt-10">
+      <h2 class="mb-1 text-xl font-bold">{toc[4][1]}</h2>
+      <p class="mb-3 text-sm" style="color:var(--fg-muted)">{s.priority.P0} · {s.priority.P1} · {s.priority.P2}. {H('Ordered by what the postings need most.', 'به ترتیب نیاز آگهی‌ها.')}</p>
+      <ol class="space-y-3">
+        {m.roadmap.map((st) => (
+          <li class="card flex gap-4 p-4">
+            <span class="grid h-8 w-8 flex-none place-items-center rounded-full text-sm font-bold text-white" style="background:var(--accent)">{d(st.n)}</span>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2"><strong>{st.title[i]}</strong><span class={`chip chip-${st.tag}`}>{s.priority[st.tag]}</span></div>
+              <p class="mt-1 text-sm">{st.items[i]}</p>
+              <p class="mt-1 text-xs" style="color:var(--fg-muted)">{st.why[i]}{st.link ? ' ' : ''}{st.link && <a href={`/${lang}/${st.link}`}>→ {H('practice on this site', 'تمرین در همین سایت')}</a>}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="mt-3 text-sm"><a href={`/${lang}/paths/`}>{H('See the study paths', 'مسیرهای مطالعه را ببینید')} →</a></p>
+    </section>
+
+    <section id="companies" class="mt-10">
+      <h2 class="mb-1 text-xl font-bold">{toc[5][1]}</h2>
+      <p class="mb-3 text-sm" style="color:var(--fg-muted)">{H('Companies with a data-engineer posting read in full. Salary "negotiable" means the ad did not publish a number.', 'شرکت‌هایی که آگهی مهندس داده‌شان کامل خوانده شد. «توافقی» یعنی آگهی عدد منتشر نکرده است.')}</p>
+      <ul class="grid gap-3 sm:grid-cols-2">
+        {m.companies.map((c) => (
+          <li class="card p-4">
+            <div class="flex items-start justify-between gap-2"><strong>{c.name}</strong><span class="chip">{c.src} · {d(c.date)}</span></div>
+            <p class="text-xs" style="color:var(--fg-muted)">{c.sector[i]} · {c.level[i]}</p>
+            <p class="mt-2 text-sm"><span class="font-bold">{H('Stack', 'استک')}:</span> <span dir="ltr">{c.stack}</span></p>
+            <p class="mt-1 text-sm"><span class="font-bold">{H('Pay', 'حقوق')}:</span> {c.pay[i]}</p>
+            <p class="mt-1 text-sm"><span class="font-bold">{H('Perks', 'مزایا')}:</span> {c.perks[i]}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-4 space-y-2 text-sm">
+        {m.employerRanking.map((x) => <p class="card p-4">{x[i]}</p>)}
+      </div>
+    </section>
+
+    <section id="perks" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[6][1]}</h2>
+      <div class="card overflow-x-auto">
+        <table class="w-full text-sm"><tbody>
+          {m.perks.map((p) => <tr class="border-t first:border-t-0" style="border-color:var(--border)"><td class="p-3 font-medium">{p.perk[i]}</td><td class="p-3" style="color:var(--fg-muted)">{p.seen[i]}</td></tr>)}
+        </tbody></table>
+      </div>
+      <p class="mt-2 text-xs" style="color:var(--fg-muted)">{H('Only 3 of 13 postings list concrete perks (Zibal, Fanavin, Adin); absence in an ad does not mean the company has none.', 'فقط ۳ از ۱۳ آگهی مزایای مشخص نوشته‌اند (زیبال، فناوین، آدین)؛ ننوشتن به معنی نداشتن نیست.')}</p>
+    </section>
+
+    <section id="rules" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[7][1]}</h2>
+      <ul class="card space-y-2 p-4 ps-8 text-sm" style="list-style:disc">{m.hiringRules.map((x) => <li>{x[i]}</li>)}</ul>
+    </section>
+
+    <section id="actions" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[8][1]}</h2>
+      <ol class="card space-y-2 p-4 ps-8 text-sm" style="list-style:decimal">{m.actions.map((x) => <li>{x[i]}</li>)}</ol>
+    </section>
+
+    <section id="sources" class="mt-10">
+      <h2 class="mb-3 text-xl font-bold">{toc[9][1]}</h2>
+      <ul class="grid gap-2 text-sm sm:grid-cols-2">
+        {m.sources.map((x) => <li><a href={x.url} target="_blank" rel="noopener noreferrer" class="card block p-3 no-underline" dir="ltr">{x.name} ↗</a></li>)}
+      </ul>
+    </section>
+  </main>
+</Base>
